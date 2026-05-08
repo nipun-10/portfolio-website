@@ -40,16 +40,22 @@
             justify-content: center;
             gap: 2rem;
             flex-wrap: wrap;
+            align-items: center;
         }
         nav a {
             color: var(--light-text);
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s ease;
+            transition: color 0.3s ease, transform 0.3s ease;
             position: relative;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
         }
         nav a:hover {
             color: var(--secondary-color);
+            transform: translateY(-2px);
         }
         nav a::after {
             content: '';
@@ -81,7 +87,7 @@
             width: 50%;
             height: 100%;
             background: radial-gradient(circle at center, rgba(0, 204, 255, 0.1) 0%, transparent 70%);
-            animation: pulse 4s ease-in-out infinite;
+            animation: pulse 4s ease-in-out infinite, slideInRight 1.2s ease;
         }
         @keyframes pulse {
             0%, 100% { opacity: 0.3; transform: scale(1); }
@@ -99,6 +105,7 @@
             text-transform: uppercase;
             animation: fadeInDown 1s ease;
             font-weight: 400;
+            filter: drop-shadow(0 0 8px rgba(0, 204, 255, 0.3));
         }
         .hero-content h1 {
             font-size: 5rem;
@@ -138,24 +145,47 @@
             border-radius: 50px;
             transition: all 0.3s ease;
             display: inline-block;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid transparent;
+            cursor: pointer;
         }
         .cta-primary {
             background: linear-gradient(135deg, #00ccff, #0066cc);
             color: var(--light-text);
             border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s ease;
+        }
+        .cta-primary:hover::before {
+            left: 100%;
         }
         .cta-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 204, 255, 0.4);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 204, 255, 0.6);
         }
         .cta-secondary {
             background: transparent;
             color: var(--light-text);
             border: 2px solid var(--secondary-color);
+            position: relative;
         }
         .cta-secondary:hover {
             background: rgba(0, 204, 255, 0.1);
-            transform: translateY(-3px);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 204, 255, 0.3);
         }
         .scroll-indicator {
             position: absolute;
@@ -163,11 +193,13 @@
             left: 50%;
             transform: translateX(-50%);
             animation: bounce 2s infinite;
+            cursor: pointer;
         }
         .scroll-indicator::before {
             content: '↓';
             font-size: 2rem;
             color: var(--secondary-color);
+            filter: drop-shadow(0 0 5px rgba(0, 204, 255, 0.5));
         }
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
@@ -198,6 +230,77 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes scaleUp {
+            from {
+                opacity: 0;
+                transform: scale(0.85);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        @keyframes floatUp {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 5px rgba(0, 204, 255, 0.1), 0 0 15px rgba(0, 102, 204, 0.1);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(0, 204, 255, 0.4), 0 0 35px rgba(0, 102, 204, 0.2);
+            }
+        }
+        @keyframes textShimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+        @keyframes slideUpStagger {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
         section {
             padding: 5rem 5%;
             max-width: 1400px;
@@ -208,17 +311,31 @@
             color: var(--secondary-color);
             letter-spacing: 3px;
             margin-bottom: 0.5rem;
+            animation: slideInLeft 0.8s ease 0.2s both;
         }
         .section-title {
             font-size: 3rem;
             margin-bottom: 3rem;
             position: relative;
+            animation: slideInLeft 0.8s ease 0.4s both;
+            background: linear-gradient(135deg, #ffffff 0%, #00ccff 50%, #0066cc 100%);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         #about {
             background: rgba(26, 31, 58, 0.5);
             border-radius: 20px;
             padding: 4rem 5%;
             margin: 2rem auto;
+            animation: slideInLeft 0.8s ease;
+            border: 1px solid rgba(0, 102, 204, 0.2);
+            transition: all 0.3s ease;
+        }
+        #about:hover {
+            border-color: rgba(0, 204, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0, 204, 255, 0.1);
         }
         .about-content {
             display: grid;
@@ -231,6 +348,13 @@
             color: var(--gray-text);
             margin-bottom: 1.5rem;
             line-height: 1.8;
+            animation: slideInLeft 0.7s ease backwards;
+        }
+        .about-text p:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .about-text p:nth-child(3) {
+            animation-delay: 0.4s;
         }
         .contact-info {
             display: flex;
@@ -244,11 +368,15 @@
             padding: 1rem;
             background: rgba(0, 102, 204, 0.1);
             border-radius: 10px;
-            transition: transform 0.3s ease, background 0.3s ease;
+            transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            min-height: 44px;
+            animation: slideInRight 0.6s ease backwards;
         }
         .contact-item:hover {
-            transform: translateX(10px);
+            transform: translateX(12px);
             background: rgba(0, 102, 204, 0.2);
+            box-shadow: 0 5px 20px rgba(0, 204, 255, 0.2);
         }
         .contact-item a {
             color: var(--light-text);
@@ -264,11 +392,43 @@
             padding: 2rem;
             border-radius: 15px;
             border: 1px solid rgba(0, 102, 204, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            height: 100%;
+            animation: scaleUp 0.6s ease backwards;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .skill-category::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 204, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .skill-category:hover::before {
+            left: 100%;
         }
         .skill-category:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 30px rgba(0, 204, 255, 0.3);
+            border-color: rgba(0, 204, 255, 0.6);
+            box-shadow: 0 0 20px rgba(0, 204, 255, 0.2), inset 0 0 20px rgba(0, 204, 255, 0.05);
+            transform: translateY(-8px);
+            background: rgba(26, 31, 58, 0.8);
+        }
+        .skill-category h3 {
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+        }
+        .skill-category:hover h3 {
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
         }
         .skill-category h3 {
             color: var(--secondary-color);
@@ -277,11 +437,18 @@
         }
         .skill-category ul {
             list-style: none;
+            position: relative;
+            z-index: 2;
         }
         .skill-category li {
             padding: 0.5rem 0;
             color: var(--gray-text);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .skill-category:hover li {
+            color: rgba(255, 255, 255, 0.9);
+            padding-left: 0.5rem;
         }
         .experience-item {
             background: rgba(26, 31, 58, 0.5);
@@ -289,10 +456,13 @@
             border-radius: 15px;
             margin-bottom: 2rem;
             border-left: 4px solid var(--secondary-color);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            animation: slideInLeft 0.7s ease backwards;
         }
         .experience-item:hover {
-            transform: translateX(10px);
+            transform: translateX(15px);
+            box-shadow: 0 10px 30px rgba(0, 204, 255, 0.2);
+            background: rgba(26, 31, 58, 0.7);
         }
         .experience-header {
             display: flex;
@@ -340,14 +510,18 @@
             padding: 2rem;
             border-radius: 15px;
             border: 1px solid rgba(0, 102, 204, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
             display: flex;
             flex-direction: column;
+            cursor: pointer;
+            height: 100%;
+            animation: slideUpStagger 0.7s ease backwards;
         }
         .project-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0, 204, 255, 0.3);
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 204, 255, 0.4);
             border-color: var(--secondary-color);
+            background: rgba(26, 31, 58, 0.8);
         }
         .project-icon {
             width: 60px;
@@ -359,6 +533,11 @@
             justify-content: center;
             margin-bottom: 1.5rem;
             font-size: 1.8rem;
+            transition: transform 0.4s ease;
+            animation: scaleUp 0.6s ease backwards;
+        }
+        .project-card:hover .project-icon {
+            transform: scale(1.2) rotate(10deg);
         }
         .project-title {
             font-size: 1.3rem;
@@ -384,6 +563,14 @@
             border-radius: 20px;
             font-size: 0.85rem;
             border: 1px solid rgba(0, 204, 255, 0.3);
+            transition: all 0.3s ease;
+            cursor: default;
+            display: inline-block;
+        }
+        .project-card:hover .project-tag {
+            background: rgba(0, 102, 204, 0.3);
+            border-color: rgba(0, 204, 255, 0.6);
+            transform: scale(1.05);
         }
         .education-grid {
             display: grid;
@@ -394,6 +581,15 @@
             padding: 2rem;
             border-radius: 15px;
             border: 1px solid rgba(0, 102, 204, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            cursor: pointer;
+            animation: scaleUp 0.6s ease backwards;
+        }
+        .education-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 204, 255, 0.2);
+            background: rgba(26, 31, 58, 0.7);
+            border-color: rgba(0, 204, 255, 0.5);
         }
         .education-degree {
             font-size: 1.3rem;
@@ -418,22 +614,26 @@
             padding: 2rem;
             border-radius: 15px;
             border: 1px solid rgba(0, 102, 204, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
             cursor: pointer;
+            height: 100%;
+            animation: slideUpStagger 0.7s ease backwards;
         }
         .certification-badge:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0, 204, 255, 0.4);
+            transform: translateY(-12px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(0, 204, 255, 0.5);
+            background: rgba(26, 31, 58, 0.8);
         }
         .badge-icon {
             width: 120px;
             height: 120px;
             margin-bottom: 1.5rem;
-            transition: transform 0.3s ease;
+            transition: transform 0.4s ease;
+            animation: floatUp 3s ease-in-out infinite;
         }
         .certification-badge:hover .badge-icon {
             transform: scale(1.1) rotate(5deg);
@@ -461,6 +661,10 @@
         #contact {
             text-align: center;
             padding: 5rem 5%;
+            animation: slideUpStagger 0.8s ease backwards;
+        }
+        #contact .section-title {
+            animation: slideInLeft 0.8s ease 0.2s both;
         }
         .social-links {
             display: flex;
@@ -468,6 +672,7 @@
             gap: 2rem;
             margin-top: 2rem;
             flex-wrap: wrap;
+            animation: fadeIn 1s ease 0.3s both;
         }
         .social-link {
             display: inline-block;
@@ -479,30 +684,203 @@
             text-decoration: none;
             transition: all 0.3s ease;
             font-weight: 600;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            animation: slideUpStagger 0.6s ease backwards;
+        }
+        .social-link:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        .social-link:nth-child(3) {
+            animation-delay: 0.2s;
         }
         .social-link:hover {
             background: var(--secondary-color);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 204, 255, 0.4);
+            transform: translateY(-6px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 204, 255, 0.5);
+            color: var(--dark-bg);
         }
         footer {
             text-align: center;
             padding: 2rem;
             background: rgba(10, 14, 39, 0.8);
             color: var(--gray-text);
+            border-top: 1px solid rgba(0, 102, 204, 0.2);
+            transition: all 0.3s ease;
+            animation: slideUpStagger 0.8s ease backwards;
         }
-        @media (max-width: 768px) {
+        footer:hover {
+            background: rgba(10, 14, 39, 0.95);
+            border-top-color: rgba(0, 204, 255, 0.3);
+        }
+        /* Mobile: 320px - 480px */
+        @media (max-width: 480px) {
+            nav {
+                padding: 0.75rem 3%;
+            }
+            nav ul {
+                gap: 0.75rem;
+                font-size: 0.9rem;
+            }
+            nav a {
+                font-size: 0.85rem;
+            }
             .hero {
-                padding: 8rem 5% 4rem;
+                padding: 6rem 4% 3rem;
+                justify-content: center;
+                text-align: center;
+            }
+            .hero::before {
+                width: 100%;
+                height: 60%;
+            }
+            .hero-content {
+                max-width: 100%;
+                z-index: 1;
+            }
+            .hero-content h2 {
+                font-size: 0.85rem;
             }
             .hero-content h1 {
-                font-size: 3rem;
+                font-size: 2rem;
             }
             .hero-content h1 .title {
-                font-size: 2.8rem;
+                font-size: 1.8rem;
             }
             .hero-content .tagline {
+                font-size: 0.95rem;
+                margin-bottom: 2rem;
+            }
+            .hero-cta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .cta-button {
+                width: 100%;
+                text-align: center;
+                padding: 0.85rem 1.5rem;
+                font-size: 0.9rem;
+            }
+            section {
+                padding: 3rem 4%;
+            }
+            .section-header {
+                font-size: 0.8rem;
+            }
+            .section-title {
+                font-size: 1.6rem;
+                margin-bottom: 2rem;
+            }
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .about-text p {
+                font-size: 0.95rem;
+            }
+            .contact-item {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+            .skills-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .skill-category {
+                padding: 1.5rem;
+            }
+            .skill-category h3 {
                 font-size: 1.1rem;
+            }
+            .experience-item {
+                padding: 1.5rem;
+            }
+            .experience-title {
+                font-size: 1.2rem;
+            }
+            .experience-company {
+                font-size: 1rem;
+            }
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .project-card {
+                padding: 1.5rem;
+            }
+            .project-title {
+                font-size: 1.1rem;
+            }
+            .project-description {
+                font-size: 0.9rem;
+            }
+            .project-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            .certifications-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .certification-badge {
+                padding: 1.5rem;
+            }
+            .badge-icon {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 1rem;
+            }
+            .badge-name {
+                font-size: 0.95rem;
+            }
+            .social-links {
+                gap: 1rem;
+                flex-direction: column;
+            }
+            .social-link {
+                width: 100%;
+                padding: 0.85rem 1.5rem;
+                font-size: 0.9rem;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .education-grid {
+                gap: 1.5rem;
+            }
+            .education-item {
+                padding: 1.5rem;
+            }
+            .scroll-indicator {
+                display: none;
+            }
+        }
+        
+        /* Tablet: 481px - 768px */
+        @media (max-width: 768px) and (min-width: 481px) {
+            nav {
+                padding: 0.9rem 4%;
+            }
+            nav ul {
+                gap: 1.2rem;
+                font-size: 0.95rem;
+            }
+            .hero {
+                padding: 7rem 5% 3rem;
+            }
+            .hero-content h1 {
+                font-size: 3.5rem;
+            }
+            .hero-content h1 .title {
+                font-size: 3.2rem;
+            }
+            .hero-content .tagline {
+                font-size: 1rem;
             }
             .hero-cta {
                 flex-direction: column;
@@ -510,27 +888,99 @@
             .cta-button {
                 width: 100%;
                 text-align: center;
+                padding: 0.9rem 2rem;
+            }
+            section {
+                padding: 4rem 5%;
             }
             .section-title {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
             .about-content {
                 grid-template-columns: 1fr;
             }
-            nav ul {
-                gap: 1rem;
+            .skills-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .certifications-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
             }
             .experience-header {
                 flex-direction: column;
             }
+            .social-links {
+                gap: 1rem;
+                flex-direction: column;
+            }
+            .social-link {
+                width: 100%;
+                min-height: 44px;
+            }
+        }
+        
+        /* Large Tablet/Desktop: 769px - 1024px */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .hero-content h1 {
+                font-size: 4rem;
+            }
+            .hero-content h1 .title {
+                font-size: 3.8rem;
+            }
+            .section-title {
+                font-size: 2.5rem;
+            }
+            .about-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 2.5rem;
+            }
+            .skills-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
             .projects-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.8rem;
+            }
+            .certifications-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Large Desktop: 1025px+ */
+        @media (min-width: 1025px) {
+            .hero {
+                padding: 8rem 10% 4rem;
+            }
+            .hero-content h1 {
+                font-size: 5rem;
+            }
+            .section-title {
+                font-size: 3rem;
+            }
+            .about-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 3rem;
+            }
+            .skills-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+            .projects-grid {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            }
+            .certifications-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             }
         }
         .fade-in {
             opacity: 0;
             transform: translateY(30px);
             transition: opacity 0.8s ease, transform 0.8s ease;
+            animation: slideUpStagger 0.7s ease forwards;
         }
         .fade-in.visible {
             opacity: 1;
@@ -540,8 +990,51 @@
         .fade-in {
             animation: ensureVisible 0.1s 1.5s forwards;
         }
+        .fade-in:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        .fade-in:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+        .fade-in:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+        .fade-in:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+        .fade-in:nth-child(6) {
+            animation-delay: 0.5s;
+        }
         @keyframes ensureVisible {
             to { opacity: 1; transform: translateY(0); }
+        }
+        .hero-image {
+            width: 280px;
+            height: 280px;
+            border-radius: 20px;
+            margin-left: 3rem;
+            object-fit: cover;
+            border: 3px solid var(--secondary-color);
+            box-shadow: 0 0 30px rgba(0, 204, 255, 0.3);
+            animation: slideInRight 1s ease, floatUp 3s ease-in-out infinite;
+        }
+        .hero-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+        @media (max-width: 768px) {
+            .hero-container {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .hero-image {
+                margin-left: 0;
+                width: 200px;
+                height: 200px;
+            }
         }
     </style>
 </head>
@@ -558,20 +1051,23 @@
         </ul>
     </nav>
     <div class="hero">
-        <div class="hero-content">
-            <h2>Nipun Bhardwaj</h2>
-            <h1>
-                <span class="name">Cloud Security Researcher &</span>
-                <span class="title">AWS Cloud Engineer</span>
-            </h1>
-            <p class="tagline">
-                Cloud Security Researcher @SecLogic.ai | AWS-Certified Cloud Engineer passionate about building scalable, secure, and cost-efficient cloud solutions.
-                Specialized in AWS services, cloud security, DevSecOps, and infrastructure with a strong foundation in Information Security.
-            </p>
-            <div class="hero-cta">
-                <a href="#contact" class="cta-button cta-primary">Get In Touch</a>
-                <a href="#experience" class="cta-button cta-secondary">View My Work</a>
+        <div class="hero-container">
+            <div class="hero-content">
+                <h2>Nipun Bhardwaj</h2>
+                <h1>
+                    <span class="name">Cloud Security Researcher &</span>
+                    <span class="title">AWS Cloud Engineer</span>
+                </h1>
+                <p class="tagline">
+                    Cloud Security Researcher @SecLogic.ai | AWS-Certified Cloud Engineer passionate about building scalable, secure, and cost-efficient cloud solutions.
+                    Specialized in AWS services, cloud security, DevSecOps, and infrastructure with a strong foundation in Information Security.
+                </p>
+                <div class="hero-cta">
+                    <a href="#contact" class="cta-button cta-primary">Get In Touch</a>
+                    <a href="#experience" class="cta-button cta-secondary">View My Work</a>
+                </div>
             </div>
+            <img src="profile.jpg" alt="Nipun Bhardwaj" class="hero-image">
         </div>
         <div class="scroll-indicator"></div>
     </div>
@@ -587,11 +1083,11 @@
             <div class="contact-info">
                 <div class="contact-item">
                     <span>📞</span>
-                    <a href="tel:9389316029">+91-9389316029</a>
+                    <a href="tel:+919389316029">+91 9389316029</a>
                 </div>
                 <div class="contact-item">
-                    <span>📞</span>
-                    <a href="email-nipuntyagi983@gmail.com">nipuntyagi983@gmail.com</a>
+                    <span>📧</span>
+                    <a href="mailto:nipuntyagi983@gmail.com">nipuntyagi983@gmail.com</a>
                 </div>
                 <div class="contact-item">
                     <span>📍</span>
@@ -605,57 +1101,75 @@
         <h2 class="section-title">Core Cloud Skills</h2>
         <div class="skills-grid">
             <div class="skill-category fade-in">
-                <h3>AWS Services</h3>
+                <h3>Cloud Platforms & Services</h3>
                 <ul>
-                    <li>EC2, S3, IAM</li>
-                    <li>VPC, EBS, AMI</li>
-                    <li>Route 53, CloudFront</li>
-                    <li>RDS, DynamoDB</li>
-                    <li>Lambda, API Gateway</li>
-                    <li>CloudWatch, SNS</li>
-                    <li>Auto Scaling, ALB</li>
+                    <li>AWS – IAM, EC2, S3, VPC</li>
+                    <li>EBS, RDS, Lambda</li>
+                    <li>API Gateway, CloudFront</li>
+                    <li>DynamoDB, SQS, KMS</li>
+                    <li>SNS, Route53, CloudWatch</li>
+                    <li>Auto Scaling, NAT Gateway</li>
+                    <li>Node.js, SQL, Python</li>
+                    <li>Shell Scripting</li>
                 </ul>
             </div>
             <div class="skill-category fade-in">
                 <h3>Cloud Security</h3>
                 <ul>
-                    <li>IAM Policies & Roles</li>
-                    <li>Security Groups & NACLs</li>
-                    <li>WAF & Firewall Rules</li>
-                    <li>Encryption & Compliance</li>
-                    <li>Access Control & Least Privilege</li>
-                    <li>DevSecOps Practices</li>
+                    <li>AWS GuardDuty & WAF</li>
+                    <li>AWS CloudTrail & Config</li>
+                    <li>Security Hub & VPC Flow Logs</li>
+                    <li>Secrets Manager</li>
+                    <li>OWASP API Top 10</li>
+                    <li>OAuth 2.0 & JWT</li>
+                    <li>Vulnerability Assessment</li>
                     <li>Threat Modeling</li>
                 </ul>
             </div>
             <div class="skill-category fade-in">
-                <h3>Networking</h3>
+                <h3>DevOps & Infrastructure</h3>
                 <ul>
-                    <li>VPC Design</li>
+                    <li>Docker & Kubernetes</li>
+                    <li>Terraform & Infrastructure as Code</li>
+                    <li>GitHub Actions</li>
+                    <li>CI/CD Pipelines</li>
+                    <li>Jenkins & AWS CLI</li>
+                    <li>Nginx & Git</li>
+                </ul>
+            </div>
+            <div class="skill-category fade-in">
+                <h3>Security & Observability</h3>
+                <ul>
+                    <li>SonarQube & SonarLint</li>
+                    <li>SIEM (Splunk)</li>
+                    <li>Penetration Testing</li>
+                    <li>Datadog & FinOps</li>
+                    <li>TCP/IP & DNS</li>
+                    <li>HTTP/HTTPS Protocols</li>
+                </ul>
+            </div>
+            <div class="skill-category fade-in">
+                <h3>AI & Emerging Tech</h3>
+                <ul>
+                    <li>Generative AI Basics</li>
+                    <li>LLMs & Prompt Engineering</li>
+                    <li>AI Workflow Automation (n8n)</li>
+                    <li>ChatGPT, Claude, Gemini</li>
+                    <li>LLM Security Awareness</li>
+                    <li>Prompt Injection Prevention</li>
+                    <li>RAG (Conceptual)</li>
+                </ul>
+            </div>
+            <div class="skill-category fade-in">
+                <h3>Networking & Architecture</h3>
+                <ul>
+                    <li>VPC Design & Networking</li>
                     <li>Subnets & Routing</li>
                     <li>NAT Gateways</li>
                     <li>VPC Peering</li>
                     <li>Load Balancing</li>
-                </ul>
-            </div>
-            <div class="skill-category fade-in">
-                <h3>DevOps & Tools</h3>
-                <ul>
-                    <li>GitHub Actions</li>
-                    <li>CI/CD Pipelines</li>
-                    <li>AWS CLI</li>
-                    <li>Git & GitHub</li>
-                    <li>Nginx</li>
-                </ul>
-            </div>
-            <div class="skill-category fade-in">
-                <h3>Programming</h3>
-                <ul>
-                    <li>C++</li>
-                    <li>SQL</li>
-                    <li>Shell Scripting</li>
-                    <li>Node.js</li>
-                    <li>MERN Stack</li>
+                    <li>Security Groups & NACLs</li>
+                    <li>Least Privilege Access</li>
                 </ul>
             </div>
         </div>
@@ -702,10 +1216,68 @@
         <h2 class="section-title">Featured Projects</h2>
         <div class="projects-grid">
             <div class="project-card fade-in">
+                <div class="project-icon">🔐</div>
+                <h3 class="project-title">Serverless API Discovery & Security Pipeline</h3>
+                <p class="project-description">
+                    Built a serverless API monitoring pipeline using API Gateway, CloudWatch Subscription Filters, and SQS to detect unauthorized endpoints in real time. Developed a containerized Lambda function in Go via ECR to decode and normalize streaming log data using Substation for security enrichment. Designed fault-tolerant log ingestion supporting anomaly detection, automated alerting, and API threat intelligence at scale.
+                </p>
+                <div class="project-tags">
+                    <span class="project-tag">API Gateway</span>
+                    <span class="project-tag">Lambda</span>
+                    <span class="project-tag">SQS</span>
+                    <span class="project-tag">CloudWatch</span>
+                    <span class="project-tag">Go</span>
+                    <span class="project-tag">Security</span>
+                </div>
+            </div>
+            <div class="project-card fade-in">
+                <div class="project-icon">🛡️</div>
+                <h3 class="project-title">Kubernetes Policy Enforcement using OPA Gatekeeper</h3>
+                <p class="project-description">
+                    Deployed OPA Gatekeeper as a Kubernetes admission controller enforcing Policy-as-Code to block privileged containers, missing resource limits, and untrusted registries. Authored ConstraintTemplates and Constraints in Rego to enforce mandatory labels, deny root execution, and restrict image sources across workloads. Leveraged audit mode to surface existing violations and align cluster posture with CIS Kubernetes benchmarks and SOC2 requirements.
+                </p>
+                <div class="project-tags">
+                    <span class="project-tag">Kubernetes</span>
+                    <span class="project-tag">OPA</span>
+                    <span class="project-tag">Gatekeeper</span>
+                    <span class="project-tag">Policy-as-Code</span>
+                    <span class="project-tag">Rego</span>
+                    <span class="project-tag">Compliance</span>
+                </div>
+            </div>
+            <div class="project-card fade-in">
+                <div class="project-icon">🔄</div>
+                <h3 class="project-title">Automated CI/CD Pipeline with GitHub Actions</h3>
+                <p class="project-description">
+                    Built an end-to-end CI/CD pipeline for a Node.js app using GitHub Actions with jobs for linting, testing, building, and zero-downtime EC2 deployment via SSH. Secured credentials via encrypted secrets and implemented health checks with automatic rollback on failed builds. Achieved sub-30-second deployments with full auditability and environment parity across staging and production.
+                </p>
+                <div class="project-tags">
+                    <span class="project-tag">GitHub Actions</span>
+                    <span class="project-tag">CI/CD</span>
+                    <span class="project-tag">Node.js</span>
+                    <span class="project-tag">EC2</span>
+                    <span class="project-tag">Automation</span>
+                </div>
+            </div>
+            <div class="project-card fade-in">
+                <div class="project-icon">🏗️</div>
+                <h3 class="project-title">Secure 3-Tier Architecture with VPC Isolation</h3>
+                <p class="project-description">
+                    Designed a 3-tier AWS architecture with isolated public and private subnets across web, application, and database layers. Configured security groups, NACLs, and VPC peering with strict routing to enforce least-privilege traffic control across all tiers. Deployed NAT Gateway for secure private subnet outbound access, eliminating public IP exposure for backend instances.
+                </p>
+                <div class="project-tags">
+                    <span class="project-tag">VPC</span>
+                    <span class="project-tag">Security Groups</span>
+                    <span class="project-tag">NACLs</span>
+                    <span class="project-tag">NAT Gateway</span>
+                    <span class="project-tag">Architecture</span>
+                </div>
+            </div>
+            <div class="project-card fade-in">
                 <div class="project-icon">☁️</div>
                 <h3 class="project-title">Full-Scale Application Deployment Using AWS Services</h3>
                 <p class="project-description">
-                    Designed and deployed a highly available and fault-tolerant web application on AWS using a production-grade architecture. Configured Application Load Balancer (ALB) to distribute traffic across EC2 instances running in an Auto Scaling Group spread across multiple Availability Zones. Hosted static assets in Amazon S3, integrated with CloudFront CDN for low-latency global delivery, and managed DNS via Amazon Route 53.
+                    Designed and deployed a highly available and fault-tolerant web application on AWS. Configured Application Load Balancer (ALB) to distribute traffic across EC2 instances in Auto Scaling Group spread across multiple Availability Zones. Hosted static assets in Amazon S3, integrated with CloudFront CDN for low-latency global delivery, and managed DNS via Amazon Route 53.
                 </p>
                 <div class="project-tags">
                     <span class="project-tag">EC2</span>
@@ -714,21 +1286,6 @@
                     <span class="project-tag">S3</span>
                     <span class="project-tag">CloudFront</span>
                     <span class="project-tag">Route 53</span>
-                    <span class="project-tag">IAM</span>
-                </div>
-            </div>
-            <div class="project-card fade-in">
-                <div class="project-icon">🔄</div>
-                <h3 class="project-title">Automated CI/CD Pipeline Using GitHub Actions</h3>
-                <p class="project-description">
-                    Implemented a fully automated CI/CD pipeline using GitHub Actions to build, test, and deploy a Node.js application onto an EC2 instance. Automated the deployment process using SSH workflows and ensured zero-downtime updates with proper service restarts and health checks.
-                </p>
-                <div class="project-tags">
-                    <span class="project-tag">GitHub Actions</span>
-                    <span class="project-tag">Node.js</span>
-                    <span class="project-tag">EC2</span>
-                    <span class="project-tag">SSH</span>
-                    <span class="project-tag">CI/CD</span>
                 </div>
             </div>
             <div class="project-card fade-in">
@@ -743,36 +1300,6 @@
                     <span class="project-tag">DynamoDB</span>
                     <span class="project-tag">IAM</span>
                     <span class="project-tag">CloudWatch</span>
-                </div>
-            </div>
-            <div class="project-card fade-in">
-                <div class="project-icon">🌐</div>
-                <h3 class="project-title">MERN Application Deployment on AWS</h3>
-                <p class="project-description">
-                    Developed a full-stack MERN web application and deployed it using modern AWS hosting best practices. Hosted the frontend on Amazon S3, accelerated by CloudFront with SSL certificates for secure HTTPS delivery. Deployed the backend on EC2, configured reverse proxy (Nginx), and connected it to MongoDB Atlas.
-                </p>
-                <div class="project-tags">
-                    <span class="project-tag">MERN Stack</span>
-                    <span class="project-tag">S3</span>
-                    <span class="project-tag">CloudFront</span>
-                    <span class="project-tag">EC2</span>
-                    <span class="project-tag">Nginx</span>
-                    <span class="project-tag">MongoDB</span>
-                </div>
-            </div>
-            <div class="project-card fade-in">
-                <div class="project-icon">🔒</div>
-                <h3 class="project-title">Secure 3-Tier Architecture with VPC Isolation</h3>
-                <p class="project-description">
-                    Designed and deployed a secure 3-tier architecture consisting of Web, Application, and Database tiers isolated across public and private subnets. Implemented VPC Peering for cross-VPC secure communication and configured routing tables for controlled data flow. Added security groups, NACLs, and IAM policies to enforce least-privilege access.
-                </p>
-                <div class="project-tags">
-                    <span class="project-tag">VPC</span>
-                    <span class="project-tag">VPC Peering</span>
-                    <span class="project-tag">Security Groups</span>
-                    <span class="project-tag">NACLs</span>
-                    <span class="project-tag">IAM</span>
-                    <span class="project-tag">3-Tier</span>
                 </div>
             </div>
         </div>
@@ -923,8 +1450,9 @@
         <div class="section-header">07</div>
         <h2 class="section-title">Let's Connect</h2>
         <p style="color: var(--gray-text); margin-bottom: 2rem; font-size: 1.2rem;">Feel free to reach out for collaborations, opportunities, or just a chat about cloud technologies!</p>
+        <p style="color: var(--gray-text); margin-bottom: 2rem; font-size: 1rem;">📧 <strong>Email:</strong> nipuntyagi983@gmail.com</p>
         <div class="social-links">
-            <a href="/cdn-cgi/l/email-protection#fe90978e8b908a879f9997c7c6cdbe99939f9792d09d9193" class="social-link">📧 Email Me</a>
+            <a href="mailto:nipuntyagi983@gmail.com" class="social-link">📧 Email Me</a>
             <a href="https://www.linkedin.com/in/nipun-bhardwaj-6312a9265/" target="_blank" class="social-link">💼 LinkedIn</a>
             <a href="https://github.com/nipun-10" target="_blank" class="social-link">💻 GitHub</a>
         </div>
