@@ -123,6 +123,7 @@
             background: linear-gradient(135deg, #00ccff, #0066cc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
             font-size: 4.5rem;
         }
         .hero-content .tagline {
@@ -430,11 +431,6 @@
             color: #00ffff;
             text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
         }
-        .skill-category h3 {
-            color: var(--secondary-color);
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-        }
         .skill-category ul {
             list-style: none;
             position: relative;
@@ -675,7 +671,7 @@
             animation: fadeIn 1s ease 0.3s both;
         }
         .social-link {
-            display: inline-block;
+            display: flex;
             padding: 1rem 2rem;
             background: rgba(0, 102, 204, 0.2);
             border: 2px solid var(--secondary-color);
@@ -685,7 +681,6 @@
             transition: all 0.3s ease;
             font-weight: 600;
             min-height: 44px;
-            display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
@@ -1500,3 +1495,5 @@
                     current = section.getAttribute('id');
                 }
             });
+        });
+    </script>
