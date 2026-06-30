@@ -1,1499 +1,602 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nipun Bhardwaj - Cloud Security Researcher</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        :root {
-            --primary-color: #0066cc;
-            --secondary-color: #00ccff;
-            --dark-bg: #0a0e27;
-            --light-text: #ffffff;
-            --gray-text: #a0a0a0;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
-            color: var(--light-text);
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(10, 14, 39, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1rem 5%;
-            z-index: 1000;
-            box-shadow: 0 2px 20px rgba(0, 102, 204, 0.3);
-        }
-        nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        nav a {
-            color: var(--light-text);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease, transform 0.3s ease;
-            position: relative;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            padding: 0.5rem 0.75rem;
-        }
-        nav a:hover {
-            color: var(--secondary-color);
-            transform: translateY(-2px);
-        }
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--secondary-color);
-            transition: width 0.3s ease;
-        }
-        nav a:hover::after {
-            width: 100%;
-        }
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 8rem 10% 4rem;
-            position: relative;
-            overflow: hidden;
-        }
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 50%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(0, 204, 255, 0.1) 0%, transparent 70%);
-            animation: pulse 4s ease-in-out infinite, slideInRight 1.2s ease;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.1); }
-        }
-        .hero-content {
-            max-width: 800px;
-            z-index: 1;
-        }
-        .hero-content h2 {
-            font-size: 1rem;
-            color: var(--secondary-color);
-            margin-bottom: 1.5rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            animation: fadeInDown 1s ease;
-            font-weight: 400;
-            filter: drop-shadow(0 0 8px rgba(0, 204, 255, 0.3));
-        }
-        .hero-content h1 {
-            font-size: 5rem;
-            margin-bottom: 2rem;
-            line-height: 1.1;
-            font-weight: 700;
-            animation: fadeInUp 1s ease;
-        }
-        .hero-content h1 .name {
-            display: block;
-            color: var(--light-text);
-        }
-        .hero-content h1 .title {
-            display: block;
-            background: linear-gradient(135deg, #00ccff, #0066cc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 4.5rem;
-        }
-        .hero-content .tagline {
-            font-size: 1.3rem;
-            color: var(--gray-text);
-            margin-bottom: 3rem;
-            animation: fadeIn 1.5s ease;
-            line-height: 1.6;
-        }
-        .hero-cta {
-            display: flex;
-            gap: 1.5rem;
-            animation: fadeIn 2s ease;
-        }
-        .cta-button {
-            padding: 1rem 2.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            text-decoration: none;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            display: inline-block;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid transparent;
-            cursor: pointer;
-        }
-        .cta-primary {
-            background: linear-gradient(135deg, #00ccff, #0066cc);
-            color: var(--light-text);
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-        }
-        .cta-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: left 0.5s ease;
-        }
-        .cta-primary:hover::before {
-            left: 100%;
-        }
-        .cta-primary:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 15px 40px rgba(0, 204, 255, 0.6);
-        }
-        .cta-secondary {
-            background: transparent;
-            color: var(--light-text);
-            border: 2px solid var(--secondary-color);
-            position: relative;
-        }
-        .cta-secondary:hover {
-            background: rgba(0, 204, 255, 0.1);
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 10px 30px rgba(0, 204, 255, 0.3);
-        }
-        .scroll-indicator {
-            position: absolute;
-            bottom: 3rem;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: bounce 2s infinite;
-            cursor: pointer;
-        }
-        .scroll-indicator::before {
-            content: '↓';
-            font-size: 2rem;
-            color: var(--secondary-color);
-            filter: drop-shadow(0 0 5px rgba(0, 204, 255, 0.5));
-        }
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-            40% { transform: translateX(-50%) translateY(-10px); }
-            60% { transform: translateX(-50%) translateY(-5px); }
-        }
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-60px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(60px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        @keyframes scaleUp {
-            from {
-                opacity: 0;
-                transform: scale(0.85);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        @keyframes floatUp {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-12px); }
-        }
-        @keyframes glow {
-            0%, 100% {
-                box-shadow: 0 0 5px rgba(0, 204, 255, 0.1), 0 0 15px rgba(0, 102, 204, 0.1);
-            }
-            50% {
-                box-shadow: 0 0 20px rgba(0, 204, 255, 0.4), 0 0 35px rgba(0, 102, 204, 0.2);
-            }
-        }
-        @keyframes textShimmer {
-            0% {
-                background-position: -1000px 0;
-            }
-            100% {
-                background-position: 1000px 0;
-            }
-        }
-        @keyframes slideUpStagger {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        @keyframes gradientShift {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-        section {
-            padding: 5rem 5%;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        .section-header {
-            font-size: 0.9rem;
-            color: var(--secondary-color);
-            letter-spacing: 3px;
-            margin-bottom: 0.5rem;
-            animation: slideInLeft 0.8s ease 0.2s both;
-        }
-        .section-title {
-            font-size: 3rem;
-            margin-bottom: 3rem;
-            position: relative;
-            animation: slideInLeft 0.8s ease 0.4s both;
-            background: linear-gradient(135deg, #ffffff 0%, #00ccff 50%, #0066cc 100%);
-            background-size: 300% 300%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        #about {
-            background: rgba(26, 31, 58, 0.5);
-            border-radius: 20px;
-            padding: 4rem 5%;
-            margin: 2rem auto;
-            animation: slideInLeft 0.8s ease;
-            border: 1px solid rgba(0, 102, 204, 0.2);
-            transition: all 0.3s ease;
-        }
-        #about:hover {
-            border-color: rgba(0, 204, 255, 0.3);
-            box-shadow: 0 0 30px rgba(0, 204, 255, 0.1);
-        }
-        .about-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            align-items: start;
-        }
-        .about-text p {
-            font-size: 1.1rem;
-            color: var(--gray-text);
-            margin-bottom: 1.5rem;
-            line-height: 1.8;
-            animation: slideInLeft 0.7s ease backwards;
-        }
-        .about-text p:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        .about-text p:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-        .contact-info {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            background: rgba(0, 102, 204, 0.1);
-            border-radius: 10px;
-            transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-            min-height: 44px;
-            animation: slideInRight 0.6s ease backwards;
-        }
-        .contact-item:hover {
-            transform: translateX(12px);
-            background: rgba(0, 102, 204, 0.2);
-            box-shadow: 0 5px 20px rgba(0, 204, 255, 0.2);
-        }
-        .contact-item a {
-            color: var(--light-text);
-            text-decoration: none;
-        }
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-        .skill-category {
-            background: rgba(26, 31, 58, 0.6);
-            padding: 2rem;
-            border-radius: 15px;
-            border: 1px solid rgba(0, 102, 204, 0.3);
-            cursor: pointer;
-            height: 100%;
-            animation: scaleUp 0.6s ease backwards;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .skill-category::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 204, 255, 0.2), transparent);
-            transition: left 0.6s ease;
-            z-index: 1;
-            pointer-events: none;
-        }
-        .skill-category:hover::before {
-            left: 100%;
-        }
-        .skill-category:hover {
-            border-color: rgba(0, 204, 255, 0.6);
-            box-shadow: 0 0 20px rgba(0, 204, 255, 0.2), inset 0 0 20px rgba(0, 204, 255, 0.05);
-            transform: translateY(-8px);
-            background: rgba(26, 31, 58, 0.8);
-        }
-        .skill-category h3 {
-            color: var(--secondary-color);
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-            transition: all 0.3s ease;
-        }
-        .skill-category:hover h3 {
-            color: #00ffff;
-            text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
-        }
-        .skill-category ul {
-            list-style: none;
-            position: relative;
-            z-index: 2;
-        }
-        .skill-category li {
-            padding: 0.5rem 0;
-            color: var(--gray-text);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-        .skill-category:hover li {
-            color: rgba(255, 255, 255, 0.9);
-            padding-left: 0.5rem;
-        }
-        .experience-item {
-            background: rgba(26, 31, 58, 0.5);
-            padding: 2.5rem;
-            border-radius: 15px;
-            margin-bottom: 2rem;
-            border-left: 4px solid var(--secondary-color);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-            animation: slideInLeft 0.7s ease backwards;
-        }
-        .experience-item:hover {
-            transform: translateX(15px);
-            box-shadow: 0 10px 30px rgba(0, 204, 255, 0.2);
-            background: rgba(26, 31, 58, 0.7);
-        }
-        .experience-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .experience-title {
-            font-size: 1.5rem;
-            color: var(--light-text);
-        }
-        .experience-company {
-            font-size: 1.2rem;
-            color: var(--secondary-color);
-            margin: 0.5rem 0;
-        }
-        .experience-duration {
-            color: var(--gray-text);
-            font-size: 0.9rem;
-        }
-        .experience-item ul {
-            list-style: none;
-            margin-top: 1rem;
-        }
-        .experience-item li {
-            padding: 0.5rem 0 0.5rem 1.5rem;
-            color: var(--gray-text);
-            position: relative;
-        }
-        .experience-item li::before {
-            content: '▹';
-            position: absolute;
-            left: 0;
-            color: var(--secondary-color);
-        }
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-        }
-        .project-card {
-            background: rgba(26, 31, 58, 0.6);
-            padding: 2rem;
-            border-radius: 15px;
-            border: 1px solid rgba(0, 102, 204, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            cursor: pointer;
-            height: 100%;
-            animation: slideUpStagger 0.7s ease backwards;
-        }
-        .project-card:hover {
-            transform: translateY(-12px) scale(1.02);
-            box-shadow: 0 20px 50px rgba(0, 204, 255, 0.4);
-            border-color: var(--secondary-color);
-            background: rgba(26, 31, 58, 0.8);
-        }
-        .project-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #00ccff, #0066cc);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            font-size: 1.8rem;
-            transition: transform 0.4s ease;
-            animation: scaleUp 0.6s ease backwards;
-        }
-        .project-card:hover .project-icon {
-            transform: scale(1.2) rotate(10deg);
-        }
-        .project-title {
-            font-size: 1.3rem;
-            color: var(--light-text);
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-        .project-description {
-            color: var(--gray-text);
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
-            flex-grow: 1;
-        }
-        .project-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-        .project-tag {
-            background: rgba(0, 102, 204, 0.2);
-            color: var(--secondary-color);
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            border: 1px solid rgba(0, 204, 255, 0.3);
-            transition: all 0.3s ease;
-            cursor: default;
-            display: inline-block;
-        }
-        .project-card:hover .project-tag {
-            background: rgba(0, 102, 204, 0.3);
-            border-color: rgba(0, 204, 255, 0.6);
-            transform: scale(1.05);
-        }
-        .education-grid {
-            display: grid;
-            gap: 2rem;
-        }
-        .education-item {
-            background: rgba(26, 31, 58, 0.5);
-            padding: 2rem;
-            border-radius: 15px;
-            border: 1px solid rgba(0, 102, 204, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-            cursor: pointer;
-            animation: scaleUp 0.6s ease backwards;
-        }
-        .education-item:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(0, 204, 255, 0.2);
-            background: rgba(26, 31, 58, 0.7);
-            border-color: rgba(0, 204, 255, 0.5);
-        }
-        .education-degree {
-            font-size: 1.3rem;
-            color: var(--secondary-color);
-            margin-bottom: 0.5rem;
-        }
-        .education-institution {
-            font-size: 1.1rem;
-            color: var(--light-text);
-            margin-bottom: 0.5rem;
-        }
-        .education-duration {
-            color: var(--gray-text);
-        }
-        .certifications-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-        .certification-badge {
-            background: rgba(26, 31, 58, 0.6);
-            padding: 2rem;
-            border-radius: 15px;
-            border: 1px solid rgba(0, 102, 204, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            cursor: pointer;
-            height: 100%;
-            animation: slideUpStagger 0.7s ease backwards;
-        }
-        .certification-badge:hover {
-            transform: translateY(-12px) scale(1.05);
-            box-shadow: 0 20px 50px rgba(0, 204, 255, 0.5);
-            background: rgba(26, 31, 58, 0.8);
-        }
-        .badge-icon {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 1.5rem;
-            transition: transform 0.4s ease;
-            animation: floatUp 3s ease-in-out infinite;
-        }
-        .certification-badge:hover .badge-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-        .badge-icon svg {
-            width: 100%;
-            height: 100%;
-            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
-        }
-        .badge-info {
-            width: 100%;
-        }
-        .badge-name {
-            color: var(--light-text);
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            line-height: 1.4;
-        }
-        .badge-issuer {
-            color: var(--secondary-color);
-            font-size: 0.9rem;
-            font-weight: 400;
-        }
-        #contact {
-            text-align: center;
-            padding: 5rem 5%;
-            animation: slideUpStagger 0.8s ease backwards;
-        }
-        #contact .section-title {
-            animation: slideInLeft 0.8s ease 0.2s both;
-        }
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 2rem;
-            flex-wrap: wrap;
-            animation: fadeIn 1s ease 0.3s both;
-        }
-        .social-link {
-            display: flex;
-            padding: 1rem 2rem;
-            background: rgba(0, 102, 204, 0.2);
-            border: 2px solid var(--secondary-color);
-            border-radius: 50px;
-            color: var(--light-text);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            min-height: 44px;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            animation: slideUpStagger 0.6s ease backwards;
-        }
-        .social-link:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-        .social-link:nth-child(3) {
-            animation-delay: 0.2s;
-        }
-        .social-link:hover {
-            background: var(--secondary-color);
-            transform: translateY(-6px) scale(1.05);
-            box-shadow: 0 15px 40px rgba(0, 204, 255, 0.5);
-            color: var(--dark-bg);
-        }
-        footer {
-            text-align: center;
-            padding: 2rem;
-            background: rgba(10, 14, 39, 0.8);
-            color: var(--gray-text);
-            border-top: 1px solid rgba(0, 102, 204, 0.2);
-            transition: all 0.3s ease;
-            animation: slideUpStagger 0.8s ease backwards;
-        }
-        footer:hover {
-            background: rgba(10, 14, 39, 0.95);
-            border-top-color: rgba(0, 204, 255, 0.3);
-        }
-        /* Mobile: 320px - 480px */
-        @media (max-width: 480px) {
-            nav {
-                padding: 0.75rem 3%;
-            }
-            nav ul {
-                gap: 0.75rem;
-                font-size: 0.9rem;
-            }
-            nav a {
-                font-size: 0.85rem;
-            }
-            .hero {
-                padding: 6rem 4% 3rem;
-                justify-content: center;
-                text-align: center;
-            }
-            .hero::before {
-                width: 100%;
-                height: 60%;
-            }
-            .hero-content {
-                max-width: 100%;
-                z-index: 1;
-            }
-            .hero-content h2 {
-                font-size: 0.85rem;
-            }
-            .hero-content h1 {
-                font-size: 2rem;
-            }
-            .hero-content h1 .title {
-                font-size: 1.8rem;
-            }
-            .hero-content .tagline {
-                font-size: 0.95rem;
-                margin-bottom: 2rem;
-            }
-            .hero-cta {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            .cta-button {
-                width: 100%;
-                text-align: center;
-                padding: 0.85rem 1.5rem;
-                font-size: 0.9rem;
-            }
-            section {
-                padding: 3rem 4%;
-            }
-            .section-header {
-                font-size: 0.8rem;
-            }
-            .section-title {
-                font-size: 1.6rem;
-                margin-bottom: 2rem;
-            }
-            .about-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            .about-text p {
-                font-size: 0.95rem;
-            }
-            .contact-item {
-                padding: 0.75rem;
-                font-size: 0.9rem;
-            }
-            .skills-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            .skill-category {
-                padding: 1.5rem;
-            }
-            .skill-category h3 {
-                font-size: 1.1rem;
-            }
-            .experience-item {
-                padding: 1.5rem;
-            }
-            .experience-title {
-                font-size: 1.2rem;
-            }
-            .experience-company {
-                font-size: 1rem;
-            }
-            .projects-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            .project-card {
-                padding: 1.5rem;
-            }
-            .project-title {
-                font-size: 1.1rem;
-            }
-            .project-description {
-                font-size: 0.9rem;
-            }
-            .project-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 1.5rem;
-            }
-            .certifications-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            .certification-badge {
-                padding: 1.5rem;
-            }
-            .badge-icon {
-                width: 80px;
-                height: 80px;
-                margin-bottom: 1rem;
-            }
-            .badge-name {
-                font-size: 0.95rem;
-            }
-            .social-links {
-                gap: 1rem;
-                flex-direction: column;
-            }
-            .social-link {
-                width: 100%;
-                padding: 0.85rem 1.5rem;
-                font-size: 0.9rem;
-                min-height: 44px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            .education-grid {
-                gap: 1.5rem;
-            }
-            .education-item {
-                padding: 1.5rem;
-            }
-            .scroll-indicator {
-                display: none;
-            }
-        }
-        
-        /* Tablet: 481px - 768px */
-        @media (max-width: 768px) and (min-width: 481px) {
-            nav {
-                padding: 0.9rem 4%;
-            }
-            nav ul {
-                gap: 1.2rem;
-                font-size: 0.95rem;
-            }
-            .hero {
-                padding: 7rem 5% 3rem;
-            }
-            .hero-content h1 {
-                font-size: 3.5rem;
-            }
-            .hero-content h1 .title {
-                font-size: 3.2rem;
-            }
-            .hero-content .tagline {
-                font-size: 1rem;
-            }
-            .hero-cta {
-                flex-direction: column;
-            }
-            .cta-button {
-                width: 100%;
-                text-align: center;
-                padding: 0.9rem 2rem;
-            }
-            section {
-                padding: 4rem 5%;
-            }
-            .section-title {
-                font-size: 2.2rem;
-            }
-            .about-content {
-                grid-template-columns: 1fr;
-            }
-            .skills-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1.5rem;
-            }
-            .projects-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            .certifications-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1.5rem;
-            }
-            .experience-header {
-                flex-direction: column;
-            }
-            .social-links {
-                gap: 1rem;
-                flex-direction: column;
-            }
-            .social-link {
-                width: 100%;
-                min-height: 44px;
-            }
-        }
-        
-        /* Large Tablet/Desktop: 769px - 1024px */
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .hero-content h1 {
-                font-size: 4rem;
-            }
-            .hero-content h1 .title {
-                font-size: 3.8rem;
-            }
-            .section-title {
-                font-size: 2.5rem;
-            }
-            .about-content {
-                grid-template-columns: 1fr 1fr;
-                gap: 2.5rem;
-            }
-            .skills-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .projects-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1.8rem;
-            }
-            .certifications-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        /* Large Desktop: 1025px+ */
-        @media (min-width: 1025px) {
-            .hero {
-                padding: 8rem 10% 4rem;
-            }
-            .hero-content h1 {
-                font-size: 5rem;
-            }
-            .section-title {
-                font-size: 3rem;
-            }
-            .about-content {
-                grid-template-columns: 1fr 1fr;
-                gap: 3rem;
-            }
-            .skills-grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            }
-            .projects-grid {
-                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            }
-            .certifications-grid {
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            }
-        }
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-            animation: slideUpStagger 0.7s ease forwards;
-        }
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        /* Fallback: ensure all fade-in elements become visible */
-        .fade-in {
-            animation: ensureVisible 0.1s 1.5s forwards;
-        }
-        .fade-in:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-        .fade-in:nth-child(3) {
-            animation-delay: 0.2s;
-        }
-        .fade-in:nth-child(4) {
-            animation-delay: 0.3s;
-        }
-        .fade-in:nth-child(5) {
-            animation-delay: 0.4s;
-        }
-        .fade-in:nth-child(6) {
-            animation-delay: 0.5s;
-        }
-        @keyframes ensureVisible {
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .hero-image {
-            width: 280px;
-            height: 280px;
-            border-radius: 20px;
-            margin-left: 3rem;
-            object-fit: cover;
-            border: 3px solid var(--secondary-color);
-            box-shadow: 0 0 30px rgba(0, 204, 255, 0.3);
-            animation: slideInRight 1s ease, floatUp 3s ease-in-out infinite;
-        }
-        .hero-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 2rem;
-        }
-        @media (max-width: 768px) {
-            .hero-container {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-            .hero-image {
-                margin-left: 0;
-                width: 200px;
-                height: 200px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nipun Bhardwaj — Cloud & Generative AI Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070b14;
+  --bg-soft:#0c1322;
+  --glass:rgba(255,255,255,0.04);
+  --glass-border:rgba(255,255,255,0.09);
+  --text:#eef1f8;
+  --muted:#94a0b8;
+  --primary:#22c7ff;
+  --primary2:#6a5bff;
+  --accent:#39e7b0;
+  --radius:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.65;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;letter-spacing:-0.02em;}
+a{color:inherit;}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:24px;}
+.eyebrow{
+  font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.22em;
+  color:var(--primary);margin-bottom:10px;display:block;
+}
+.text-gradient{
+  background:linear-gradient(120deg,var(--primary),var(--primary2));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.glass{
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius);
+  backdrop-filter:blur(14px);
+}
+
+/* ===== Ambient floating tech icons ===== */
+.float-field{position:fixed;inset:0;overflow:hidden;z-index:0;pointer-events:none;}
+.float-field::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 18% 12%,rgba(34,199,255,.13),transparent 45%),
+             radial-gradient(circle at 85% 30%,rgba(106,91,255,.14),transparent 40%),
+             radial-gradient(circle at 50% 90%,rgba(57,231,176,.08),transparent 45%);
+}
+.ficon{position:absolute;opacity:.35;animation:drift 9s ease-in-out infinite;}
+.ficon svg{width:100%;height:100%;display:block;}
+@keyframes drift{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-18px) rotate(6deg);}}
+
+/* ===== Nav ===== */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  background:rgba(7,11,20,.72);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:1120px;margin:0 auto;}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-family:'Space Grotesk',sans-serif;text-decoration:none;}
+.brand-mark{
+  width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  font-size:.8rem;font-weight:700;color:#04111c;
+}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{font-size:.9rem;color:var(--muted);text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--text);}
+.resume-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  color:#04111c;font-weight:600;font-size:.86rem;
+  padding:10px 18px;border-radius:999px;text-decoration:none;
+  transition:transform .2s,box-shadow .2s;
+}
+.resume-btn:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(34,199,255,.32);}
+
+/* ===== Hero ===== */
+.hero{position:relative;padding:150px 0 90px;z-index:1;}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.78rem;padding:7px 16px;border-radius:999px;margin-bottom:22px;
+}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 1.8s infinite;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(57,231,176,.45);}70%{box-shadow:0 0 0 8px rgba(57,231,176,0);}100%{box-shadow:0 0 0 0 rgba(57,231,176,0);}}
+.hero h1{font-size:clamp(2.2rem,5.4vw,3.6rem);line-height:1.07;font-weight:700;margin-bottom:18px;}
+.hero p.lede{color:var(--muted);font-size:1.05rem;max-width:620px;margin-bottom:8px;}
+.hero p.lede b{color:var(--text);font-weight:600;}
+.hero p.sub{color:var(--muted);max-width:640px;margin-bottom:34px;}
+.cta-row{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:38px;}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;font-size:.92rem;font-weight:600;
+  padding:13px 26px;border-radius:999px;text-decoration:none;transition:transform .2s,box-shadow .2s,background .2s;
+}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#04111c;}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 16px 32px rgba(34,199,255,.3);}
+.btn-ghost{background:rgba(255,255,255,.05);border:1px solid var(--glass-border);color:var(--text);}
+.btn-ghost:hover{background:rgba(255,255,255,.09);}
+.btn-text{color:var(--muted);padding:13px 6px;}
+.btn-text:hover{color:var(--text);}
+.meta-row{display:flex;flex-wrap:wrap;gap:22px;color:var(--muted);font-size:.88rem;margin-bottom:22px;}
+.meta-row span{display:inline-flex;align-items:center;gap:7px;}
+.social-row{display:flex;gap:12px;}
+.icon-circle{
+  width:42px;height:42px;border-radius:50%;display:grid;place-items:center;
+  background:rgba(255,255,255,.05);border:1px solid var(--glass-border);transition:.2s;
+}
+.icon-circle:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);}
+
+/* ===== Generic section ===== */
+section{position:relative;z-index:1;padding:96px 0;}
+.section-head{margin-bottom:46px;max-width:680px;}
+.section-head h2{font-size:clamp(1.6rem,3.4vw,2.2rem);}
+
+/* ===== About ===== */
+.about-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:44px;}
+.about-grid p{color:var(--muted);margin-bottom:14px;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-content:start;}
+.stat-card{padding:20px;}
+.stat-num{font-size:1.9rem;font-weight:700;font-family:'Space Grotesk',sans-serif;}
+.stat-label{color:var(--muted);font-size:.78rem;margin-top:4px;}
+
+/* ===== Skills ===== */
+.skill-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.skill-card{padding:24px;transition:.25s;}
+.skill-card:hover{border-color:rgba(34,199,255,.4);transform:translateY(-3px);}
+.skill-card-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.skill-ico{
+  width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:1.1rem;
+  background:linear-gradient(135deg,rgba(34,199,255,.18),rgba(106,91,255,.18));
+}
+.skill-card h3{font-size:1rem;font-weight:600;}
+.tag-row{display:flex;flex-wrap:wrap;gap:8px;}
+.tag{
+  font-size:.76rem;padding:5px 12px;border-radius:999px;
+  border:1px solid var(--glass-border);background:rgba(255,255,255,.03);color:var(--muted);
+}
+
+/* ===== Experience ===== */
+.timeline{position:relative;padding-left:36px;}
+.timeline::before{content:'';position:absolute;left:9px;top:6px;bottom:6px;width:1px;
+  background:linear-gradient(var(--primary),rgba(255,255,255,.05));}
+.tl-item{position:relative;margin-bottom:46px;}
+.tl-item:last-child{margin-bottom:0;}
+.tl-dot{
+  position:absolute;left:-36px;top:2px;width:20px;height:20px;border-radius:50%;
+  background:var(--bg-soft);border:2px solid var(--primary);display:grid;place-items:center;
+}
+.tl-dot::after{content:'';width:7px;height:7px;border-radius:50%;background:var(--primary);}
+.tl-date{color:var(--muted);font-size:.82rem;margin-bottom:4px;}
+.tl-role{font-size:1.15rem;font-weight:600;margin-bottom:2px;}
+.tl-org{color:var(--primary);font-size:.92rem;margin-bottom:14px;}
+.tl-card{padding:22px;}
+.tl-card ul{padding-left:18px;color:var(--muted);font-size:.92rem;}
+.tl-card li{margin-bottom:8px;}
+.tl-current{
+  display:inline-block;margin-left:10px;font-size:.7rem;font-weight:600;padding:3px 10px;
+  border-radius:999px;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#04111c;vertical-align:middle;
+}
+
+/* ===== Projects ===== */
+.project-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.project-card{padding:26px;position:relative;overflow:hidden;transition:.25s;display:flex;flex-direction:column;}
+.project-card:hover{transform:translateY(-4px);border-color:rgba(34,199,255,.35);}
+.project-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:16px;}
+.project-ico{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:1.3rem;
+  background:rgba(255,255,255,.05);border:1px solid var(--glass-border);}
+.project-card h3{font-size:1.08rem;margin-bottom:8px;}
+.project-card p{color:var(--muted);font-size:.9rem;margin-bottom:14px;}
+.impact-box{
+  margin-top:auto;padding:13px 14px;border-radius:12px;
+  background:rgba(57,231,176,.06);border:1px solid rgba(57,231,176,.22);font-size:.82rem;color:#a9f5dd;
+  margin-bottom:14px;
+}
+.impact-box b{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;color:#39e7b0;}
+
+/* ===== Certifications ===== */
+.cert-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.cert-card{display:flex;align-items:flex-start;gap:14px;padding:18px;text-decoration:none;color:var(--text);transition:.2s;}
+.cert-card:hover{border-color:rgba(255,255,255,.25);}
+.cert-ico{width:40px;height:40px;border-radius:10px;flex-shrink:0;display:grid;place-items:center;font-size:1.1rem;
+  background:linear-gradient(135deg,rgba(255,189,46,.2),rgba(255,123,46,.12));}
+.cert-name{font-weight:600;font-size:.92rem;line-height:1.3;}
+.cert-issuer{color:var(--muted);font-size:.78rem;margin-top:3px;}
+
+/* ===== Education ===== */
+.edu-card{display:flex;gap:16px;align-items:flex-start;padding:26px;margin-top:8px;}
+.edu-ico{width:44px;height:44px;border-radius:12px;flex-shrink:0;display:grid;place-items:center;font-size:1.2rem;
+  background:linear-gradient(135deg,rgba(34,199,255,.2),rgba(106,91,255,.18));}
+
+/* ===== CTA band ===== */
+.cta-band{padding:56px;text-align:left;position:relative;overflow:hidden;}
+.cta-band h2{font-size:clamp(1.5rem,3vw,2.1rem);margin-bottom:14px;}
+.cta-band p{color:var(--muted);max-width:560px;margin-bottom:26px;}
+
+/* ===== Contact ===== */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;}
+.contact-list{display:flex;flex-direction:column;gap:12px;}
+.contact-row{display:flex;align-items:center;gap:12px;padding:14px 16px;text-decoration:none;color:var(--text);font-size:.92rem;}
+.contact-row:hover{border-color:rgba(255,255,255,.22);}
+form.glass{padding:26px;display:flex;flex-direction:column;gap:16px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+label{font-size:.75rem;color:var(--muted);display:block;margin-bottom:6px;}
+input,textarea{
+  width:100%;background:rgba(255,255,255,.04);border:1px solid var(--glass-border);
+  border-radius:10px;padding:11px 13px;color:var(--text);font-family:inherit;font-size:.9rem;outline:none;
+}
+input:focus,textarea:focus{border-color:var(--primary);}
+button.submit{
+  border:0;cursor:pointer;border-radius:10px;padding:13px;font-weight:600;font-size:.92rem;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));color:#04111c;
+}
+
+footer{border-top:1px solid rgba(255,255,255,.07);padding:30px 0;position:relative;z-index:1;}
+.footer-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;color:var(--muted);font-size:.82rem;}
+.footer-links{display:flex;gap:18px;}
+.footer-links a{text-decoration:none;color:var(--muted);}
+.footer-links a:hover{color:var(--text);}
+
+@media(max-width:860px){
+  .nav-links{display:none;}
+  .about-grid,.contact-grid{grid-template-columns:1fr;}
+  .skill-grid{grid-template-columns:1fr 1fr;}
+  .project-grid{grid-template-columns:1fr;}
+  .cert-grid{grid-template-columns:1fr 1fr;}
+  .form-grid{grid-template-columns:1fr;}
+}
+@media(max-width:560px){
+  .skill-grid,.cert-grid{grid-template-columns:1fr;}
+  .resume-btn span.label{display:none;}
+}
+</style>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="#about">About</a></li>
-            <li><a href="#skills">Skills</a></li>
-            <li><a href="#experience">Experience</a></li>
-            <li><a href="#projects">Projects</a></li>
-            <li><a href="#education">Education</a></li>
-            <li><a href="#certifications">Certifications</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </nav>
-    <div class="hero">
-        <div class="hero-container">
-            <div class="hero-content">
-                <h2>Nipun Bhardwaj</h2>
-                <h1>
-                    <span class="name">Cloud Security Researcher &</span>
-                    <span class="title">AWS Cloud Engineer</span>
-                </h1>
-                <p class="tagline">
-                    Cloud Security Researcher @SecLogic.ai | AWS-Certified Cloud Engineer passionate about building scalable, secure, and cost-efficient cloud solutions.
-                    Specialized in AWS services, cloud security, DevSecOps, and infrastructure with a strong foundation in Information Security.
-                </p>
-                <div class="hero-cta">
-                    <a href="#contact" class="cta-button cta-primary">Get In Touch</a>
-                    <a href="#experience" class="cta-button cta-secondary">View My Work</a>
-                </div>
-            </div>
-            <img src="profile.JPG" alt="Nipun Bhardwaj" class="hero-image">
-        </div>
-        <div class="scroll-indicator"></div>
+
+<div class="float-field" aria-hidden="true">
+  <div class="ficon" style="top:9%;left:6%;width:42px;height:42px;color:#22c7ff;animation-delay:0s;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M8 19v2M16 19v2M2 11h20"/></svg>
+  </div>
+  <div class="ficon" style="top:16%;left:85%;width:50px;height:50px;color:#6a5bff;animation-delay:1.2s;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+  </div>
+  <div class="ficon" style="top:30%;left:16%;width:38px;height:38px;color:#39e7b0;animation-delay:2.1s;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg>
+  </div>
+  <div class="ficon" style="top:46%;left:90%;width:46px;height:46px;color:#22c7ff;animation-delay:.6s;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="11" width="18" height="9" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+  </div>
+  <div class="ficon" style="top:60%;left:5%;width:36px;height:36px;color:#ffb02e;animation-delay:1.7s;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+  </div>
+  <div class="ficon" style="top:70%;left:78%;width:40px;height:40px;color:#6a5bff;animation-delay:2.6s;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>
+  </div>
+  <div class="ficon" style="top:83%;left:30%;width:34px;height:34px;color:#39e7b0;animation-delay:.9s;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 1v4M12 19v4M4.2 4.2l2.8 2.8M17 17l2.8 2.8M1 12h4M19 12h4M4.2 19.8 7 17M17 7l2.8-2.8"/></svg>
+  </div>
+  <div class="ficon" style="top:8%;left:46%;width:30px;height:30px;color:#22c7ff;animation-delay:1.9s;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 4 6v6c0 5 3.4 8.4 8 10 4.6-1.6 8-5 8-10V6l-8-4Z"/></svg>
+  </div>
+</div>
+
+<header>
+  <nav class="nav">
+    <a href="#home" class="brand"><span class="brand-mark">NB</span> Nipun Bhardwaj</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#certifications">Certifications</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="Nipun_Bhardwaj_Resume.pdf" download class="resume-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+      <span class="label">Resume</span>
+    </a>
+  </nav>
+</header>
+
+<section id="home" class="hero">
+  <div class="wrap">
+    <div class="badge glass"><span class="dot"></span> Open to Cloud &amp; GenAI opportunities</div>
+    <h1>Nipun Bhardwaj<br><span class="text-gradient">Cloud &amp; Generative AI Engineer</span></h1>
+    <p class="lede">Cloud Security Researcher @ <b>SecLogic.io</b> · AWS-Certified Cloud Engineer.</p>
+    <p class="sub">I help teams ship secure, scalable cloud infrastructure and production-grade Generative AI systems — from hardened AWS architectures to RAG pipelines and agentic AI applications powered by Bedrock and LangGraph.</p>
+    <div class="cta-row">
+      <a href="#projects" class="btn btn-primary">View Projects <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      <a href="Nipun_Bhardwaj_Resume.pdf" download class="btn btn-ghost"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg> Download Resume</a>
+      <a href="#contact" class="btn btn-text">Contact Me</a>
     </div>
-    <section id="about">
-        <div class="section-header">01</div>
-        <h2 class="section-title">About Me</h2>
-        <div class="about-content">
-            <div class="about-text">
-                <p>AWS-certified Cloud Security Researcher at SecLogic.ai and former Cloud Engineer at Velocis Systems with hands-on expertise in designing and deploying scalable, secure cloud infrastructure on AWS.</p>
-                <p>Experienced in EC2 provisioning, VPC networking, IAM configuration, CloudWatch monitoring, L1/L2 support, and cloud security research. Passionate about DevSecOps, access control, WAF, and building compliance-driven cloud architectures.</p>
-                <p>I thrive in fast-paced environments and am committed to continuous learning, staying updated with the latest cloud security threats, tools, and best practices.</p>
-            </div>
-            <div class="contact-info">
-                <div class="contact-item">
-                    <span>📞</span>
-                    <a href="tel:+919389316029">+91 9389316029</a>
-                </div>
-                <div class="contact-item">
-                    <span>📧</span>
-                    <a href="mailto:nipuntyagi983@gmail.com">nipuntyagi983@gmail.com</a>
-                </div>
-                <div class="contact-item">
-                    <span>📍</span>
-                    <span>Noida, Uttar Pradesh, India</span>
-                </div>
-            </div>
+    <div class="meta-row">
+      <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg> Noida, Uttar Pradesh, India</span>
+      <a href="mailto:nipuntyagi983@gmail.com" style="text-decoration:none;color:inherit;"><span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg> nipuntyagi983@gmail.com</span></a>
+      <a href="tel:+919389316029" style="text-decoration:none;color:inherit;"><span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg> +91 93893 16029</span></a>
+    </div>
+    <div class="social-row">
+      <a class="icon-circle" href="https://github.com/nipun-10" target="_blank" aria-label="GitHub"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg></a>
+      <a class="icon-circle" href="https://www.linkedin.com/in/nipun-bhardwaj-6312a9265/" target="_blank" aria-label="LinkedIn"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></a>
+      <a class="icon-circle" href="mailto:nipuntyagi983@gmail.com" aria-label="Email"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <div class="section-head"><span class="eyebrow">About</span><h2>Securing and building the cloud, with AI at the edge.</h2></div>
+    <div class="about-grid">
+      <div>
+        <p>AWS-certified Cloud Security Researcher at SecLogic.io and former Cloud Engineer at Velocis Systems, with hands-on experience designing and deploying scalable, secure cloud infrastructure on AWS — from IAM hardening to multi-tier VPC architectures.</p>
+        <p>Increasingly focused on Generative AI engineering: building production-grade RAG pipelines and agentic AI applications using AWS Bedrock, LangGraph, vector databases, and foundation models like Claude, Llama, and Gemini.</p>
+        <p>Comfortable across EC2 provisioning, VPC networking, IAM configuration, CloudWatch monitoring, and security research — and committed to staying current with the latest cloud security threats, tools, and AI engineering practices.</p>
+      </div>
+      <div class="stat-grid">
+        <div class="glass stat-card"><div class="stat-num text-gradient">20+</div><div class="stat-label">AWS Services Used</div></div>
+        <div class="glass stat-card"><div class="stat-num text-gradient">7+</div><div class="stat-label">Cloud &amp; AI Projects Shipped</div></div>
+        <div class="glass stat-card"><div class="stat-num text-gradient">2</div><div class="stat-label">Cloud Internship Roles</div></div>
+        <div class="glass stat-card"><div class="stat-num text-gradient">6</div><div class="stat-label">Cloud Certifications</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="section-head"><span class="eyebrow">Skills</span><h2>The stack I build and secure with.</h2></div>
+    <div class="skill-grid">
+      <div class="glass skill-card">
+        <div class="skill-card-head"><div class="skill-ico">🧠</div><h3>Generative AI &amp; Agentic Systems</h3></div>
+        <div class="tag-row">
+          <span class="tag">AWS Bedrock</span><span class="tag">Titan Embeddings</span><span class="tag">RAG Architecture</span>
+          <span class="tag">LangGraph</span><span class="tag">Vector DBs</span><span class="tag">Prompt Engineering</span><span class="tag">LLM Security</span>
         </div>
-    </section>
-    <section id="skills">
-        <div class="section-header">02</div>
-        <h2 class="section-title">Core Cloud Skills</h2>
-        <div class="skills-grid">
-            <div class="skill-category fade-in">
-                <h3>Cloud Platforms & Services</h3>
-                <ul>
-                    <li>AWS – IAM, EC2, S3, VPC</li>
-                    <li>EBS, RDS, Lambda</li>
-                    <li>API Gateway, CloudFront</li>
-                    <li>DynamoDB, SQS, KMS</li>
-                    <li>SNS, Route53, CloudWatch</li>
-                    <li>Auto Scaling, NAT Gateway</li>
-                    <li>Node.js, SQL, Python</li>
-                    <li>Shell Scripting</li>
-                </ul>
-            </div>
-            <div class="skill-category fade-in">
-                <h3>Cloud Security</h3>
-                <ul>
-                    <li>AWS GuardDuty & WAF</li>
-                    <li>AWS CloudTrail & Config</li>
-                    <li>Security Hub & VPC Flow Logs</li>
-                    <li>Secrets Manager</li>
-                    <li>OWASP API Top 10</li>
-                    <li>OAuth 2.0 & JWT</li>
-                    <li>Vulnerability Assessment</li>
-                    <li>Threat Modeling</li>
-                </ul>
-            </div>
-            <div class="skill-category fade-in">
-                <h3>DevOps & Infrastructure</h3>
-                <ul>
-                    <li>Docker & Kubernetes</li>
-                    <li>Terraform & Infrastructure as Code</li>
-                    <li>GitHub Actions</li>
-                    <li>CI/CD Pipelines</li>
-                    <li>Jenkins & AWS CLI</li>
-                    <li>Nginx & Git</li>
-                </ul>
-            </div>
-            <div class="skill-category fade-in">
-                <h3>Security & Observability</h3>
-                <ul>
-                    <li>SonarQube & SonarLint</li>
-                    <li>SIEM (Splunk)</li>
-                    <li>Penetration Testing</li>
-                    <li>Datadog & FinOps</li>
-                    <li>TCP/IP & DNS</li>
-                    <li>HTTP/HTTPS Protocols</li>
-                </ul>
-            </div>
-            <div class="skill-category fade-in">
-                <h3>AI & Emerging Tech</h3>
-                <ul>
-                    <li>Generative AI Basics</li>
-                    <li>LLMs & Prompt Engineering</li>
-                    <li>AI Workflow Automation (n8n)</li>
-                    <li>ChatGPT, Claude, Gemini</li>
-                    <li>LLM Security Awareness</li>
-                    <li>Prompt Injection Prevention</li>
-                    <li>RAG (Conceptual)</li>
-                </ul>
-            </div>
-            <div class="skill-category fade-in">
-                <h3>Networking & Architecture</h3>
-                <ul>
-                    <li>VPC Design & Networking</li>
-                    <li>Subnets & Routing</li>
-                    <li>NAT Gateways</li>
-                    <li>VPC Peering</li>
-                    <li>Load Balancing</li>
-                    <li>Security Groups & NACLs</li>
-                    <li>Least Privilege Access</li>
-                </ul>
-            </div>
+      </div>
+      <div class="glass skill-card">
+        <div class="skill-card-head"><div class="skill-ico">☁️</div><h3>Cloud Platforms &amp; Services</h3></div>
+        <div class="tag-row">
+          <span class="tag">EC2 / S3 / VPC</span><span class="tag">Lambda</span><span class="tag">API Gateway</span>
+          <span class="tag">DynamoDB</span><span class="tag">CloudFront</span><span class="tag">Route 53</span><span class="tag">CloudWatch</span>
         </div>
-    </section>
-    <section id="experience">
-        <div class="section-header">03</div>
-        <h2 class="section-title">My Experience</h2>
-        <div class="experience-item fade-in">
-            <div class="experience-header">
-                <div>
-                    <h3 class="experience-title">Cloud Security Researcher</h3>
-                    <div class="experience-company">SecLogic.ai</div>
-                    <div class="experience-duration">March 2026 - Present · Noida, Uttar Pradesh, India</div>
-                </div>
-                <span style="background: linear-gradient(135deg, #00ccff, #0066cc); padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">Current Role</span>
-            </div>
-            <ul>
-                <li>Conducting cloud security research focused on identifying misconfigurations, vulnerabilities, and attack vectors in AWS environments</li>
-                <li>Analyzing IAM policy weaknesses, privilege escalation paths, and access control gaps to strengthen cloud security posture</li>
-                <li>Researching WAF bypass techniques, network-layer threats, and cloud-native security controls for DevSecOps integration</li>
-                <li>Developing security frameworks, threat models, and remediation playbooks for cloud infrastructure protection</li>
-                <li>Collaborating on compliance fundamentals and encryption strategies to ensure secure and audit-ready cloud deployments</li>
-            </ul>
+      </div>
+      <div class="glass skill-card">
+        <div class="skill-card-head"><div class="skill-ico">🛡️</div><h3>Cloud Security</h3></div>
+        <div class="tag-row">
+          <span class="tag">GuardDuty</span><span class="tag">WAF</span><span class="tag">CloudTrail</span>
+          <span class="tag">Security Hub</span><span class="tag">OWASP API Top 10</span><span class="tag">OAuth 2.0 / JWT</span>
         </div>
-        <div class="experience-item fade-in">
-            <div class="experience-header">
-                <div>
-                    <h3 class="experience-title">Cloud Engineer</h3>
-                    <div class="experience-company">Velocis Systems Pvt. Ltd.</div>
-                    <div class="experience-duration">November 2025 - January 2026 · Noida, Uttar Pradesh, India</div>
-                </div>
-            </div>
-            <ul>
-                <li>AWS Infrastructure Management: Provisioning and configuring EC2 instances, managing security groups, VPC networking, and IAM roles for production environments with adherence to security best practices</li>
-                <li>Monitoring & Observability: Setting up CloudWatch metrics, alarms, logs, and dashboards to monitor resources health, performance, and utilization</li>
-                <li>Ticket Handling & Support: Managing L1 support tickets (incident response, troubleshooting, configuration changes, instance restarts, new user provisioning) with documented SOPs and escalation workflows</li>
-                <li>Network Configuration: Designing and configuring VPC architectures, subnet routing, NAT gateways, and VPC peering to enable secure inter-service communication</li>
-                <li>Documentation: Creating Standard Operating Procedures (SOPs), and runbooks for new incidents or change activities</li>
-            </ul>
+      </div>
+      <div class="glass skill-card">
+        <div class="skill-card-head"><div class="skill-ico">⚙️</div><h3>DevOps &amp; Infrastructure</h3></div>
+        <div class="tag-row">
+          <span class="tag">Docker</span><span class="tag">Kubernetes</span><span class="tag">Terraform</span>
+          <span class="tag">GitHub Actions</span><span class="tag">Jenkins</span><span class="tag">Nginx</span>
         </div>
-    </section>
-    <section id="projects">
-        <div class="section-header">04</div>
-        <h2 class="section-title">Featured Projects</h2>
-        <div class="projects-grid">
-            <div class="project-card fade-in">
-                <div class="project-icon">🔐</div>
-                <h3 class="project-title">Serverless API Discovery & Security Pipeline</h3>
-                <p class="project-description">
-                    Built a serverless API monitoring pipeline using API Gateway, CloudWatch Subscription Filters, and SQS to detect unauthorized endpoints in real time. Developed a containerized Lambda function in Go via ECR to decode and normalize streaming log data using Substation for security enrichment. Designed fault-tolerant log ingestion supporting anomaly detection, automated alerting, and API threat intelligence at scale.
-                </p>
-                <div class="project-tags">
-                    <span class="project-tag">API Gateway</span>
-                    <span class="project-tag">Lambda</span>
-                    <span class="project-tag">SQS</span>
-                    <span class="project-tag">CloudWatch</span>
-                    <span class="project-tag">Go</span>
-                    <span class="project-tag">Security</span>
-                </div>
-            </div>
-            <div class="project-card fade-in">
-                <div class="project-icon">🛡️</div>
-                <h3 class="project-title">Kubernetes Policy Enforcement using OPA Gatekeeper</h3>
-                <p class="project-description">
-                    Deployed OPA Gatekeeper as a Kubernetes admission controller enforcing Policy-as-Code to block privileged containers, missing resource limits, and untrusted registries. Authored ConstraintTemplates and Constraints in Rego to enforce mandatory labels, deny root execution, and restrict image sources across workloads. Leveraged audit mode to surface existing violations and align cluster posture with CIS Kubernetes benchmarks and SOC2 requirements.
-                </p>
-                <div class="project-tags">
-                    <span class="project-tag">Kubernetes</span>
-                    <span class="project-tag">OPA</span>
-                    <span class="project-tag">Gatekeeper</span>
-                    <span class="project-tag">Policy-as-Code</span>
-                    <span class="project-tag">Rego</span>
-                    <span class="project-tag">Compliance</span>
-                </div>
-            </div>
-            <div class="project-card fade-in">
-                <div class="project-icon">🔄</div>
-                <h3 class="project-title">Automated CI/CD Pipeline with GitHub Actions</h3>
-                <p class="project-description">
-                    Built an end-to-end CI/CD pipeline for a Node.js app using GitHub Actions with jobs for linting, testing, building, and zero-downtime EC2 deployment via SSH. Secured credentials via encrypted secrets and implemented health checks with automatic rollback on failed builds. Achieved sub-30-second deployments with full auditability and environment parity across staging and production.
-                </p>
-                <div class="project-tags">
-                    <span class="project-tag">GitHub Actions</span>
-                    <span class="project-tag">CI/CD</span>
-                    <span class="project-tag">Node.js</span>
-                    <span class="project-tag">EC2</span>
-                    <span class="project-tag">Automation</span>
-                </div>
-            </div>
-            <div class="project-card fade-in">
-                <div class="project-icon">🏗️</div>
-                <h3 class="project-title">Secure 3-Tier Architecture with VPC Isolation</h3>
-                <p class="project-description">
-                    Designed a 3-tier AWS architecture with isolated public and private subnets across web, application, and database layers. Configured security groups, NACLs, and VPC peering with strict routing to enforce least-privilege traffic control across all tiers. Deployed NAT Gateway for secure private subnet outbound access, eliminating public IP exposure for backend instances.
-                </p>
-                <div class="project-tags">
-                    <span class="project-tag">VPC</span>
-                    <span class="project-tag">Security Groups</span>
-                    <span class="project-tag">NACLs</span>
-                    <span class="project-tag">NAT Gateway</span>
-                    <span class="project-tag">Architecture</span>
-                </div>
-            </div>
-            <div class="project-card fade-in">
-                <div class="project-icon">☁️</div>
-                <h3 class="project-title">Full-Scale Application Deployment Using AWS Services</h3>
-                <p class="project-description">
-                    Designed and deployed a highly available and fault-tolerant web application on AWS. Configured Application Load Balancer (ALB) to distribute traffic across EC2 instances in Auto Scaling Group spread across multiple Availability Zones. Hosted static assets in Amazon S3, integrated with CloudFront CDN for low-latency global delivery, and managed DNS via Amazon Route 53.
-                </p>
-                <div class="project-tags">
-                    <span class="project-tag">EC2</span>
-                    <span class="project-tag">ALB</span>
-                    <span class="project-tag">Auto Scaling</span>
-                    <span class="project-tag">S3</span>
-                    <span class="project-tag">CloudFront</span>
-                    <span class="project-tag">Route 53</span>
-                </div>
-            </div>
-            <div class="project-card fade-in">
-                <div class="project-icon">⚡</div>
-                <h3 class="project-title">Serverless CRUD API Using AWS Lambda</h3>
-                <p class="project-description">
-                    Built and deployed a serverless REST API using AWS Lambda functions integrated with API Gateway for routing and request validation. Designed a DynamoDB table for scalable NoSQL storage and implemented CRUD operations with IAM role-based access restrictions. Configured CloudWatch for centralized logging, metrics, and performance monitoring.
-                </p>
-                <div class="project-tags">
-                    <span class="project-tag">Lambda</span>
-                    <span class="project-tag">API Gateway</span>
-                    <span class="project-tag">DynamoDB</span>
-                    <span class="project-tag">IAM</span>
-                    <span class="project-tag">CloudWatch</span>
-                </div>
-            </div>
+      </div>
+      <div class="glass skill-card">
+        <div class="skill-card-head"><div class="skill-ico">📊</div><h3>Security &amp; Observability</h3></div>
+        <div class="tag-row">
+          <span class="tag">SonarQube</span><span class="tag">Splunk SIEM</span><span class="tag">Datadog</span>
+          <span class="tag">Pentagi</span><span class="tag">FinOps (Cast.ai)</span>
         </div>
-    </section>
-    <section id="education">
-        <div class="section-header">05</div>
-        <h2 class="section-title">Education</h2>
-        <div class="education-grid">
-            <div class="education-item fade-in">
-                <div class="education-degree">Bachelor of Technology (B.Tech)</div>
-                <div class="education-institution">Vellore Institute of Technology,vellore</div>
-                <div class="education-duration">July 2021 - June 2025</div>
-                <div style="color: var(--gray-text); margin-top: 0.5rem;">Computer Science and Engineering (CSE) with Information Security</div>
-            </div>
-            <div class="education-item fade-in">
-                <div class="education-degree">Senior Secondary (12th)</div>
-                <div class="education-institution">Dewan Public School International - CBSE</div>
-                <div class="education-duration">April 2020 - March 2021 </div>
-                <div style="color: var(--gray-text); margin-top: 0.5rem;">Meerut, Uttar Pradesh</div>
-            </div>
-            <div class="education-item fade-in">
-                <div class="education-degree">Secondary (10th)</div>
-                <div class="education-institution">Dewan Public School International - CBSE</div>
-                <div class="education-duration">April 2018 - March 2019 </div>
-                <div style="color: var(--gray-text); margin-top: 0.5rem;">Meerut, Uttar Pradesh</div>
-            </div>
+      </div>
+      <div class="glass skill-card">
+        <div class="skill-card-head"><div class="skill-ico">🌐</div><h3>Networking &amp; Architecture</h3></div>
+        <div class="tag-row">
+          <span class="tag">VPC Design</span><span class="tag">Subnets / NACLs</span><span class="tag">NAT Gateway</span>
+          <span class="tag">VPC Peering</span><span class="tag">Load Balancing</span>
         </div>
-    </section>
-    <section id="certifications">
-        <div class="section-header">06</div>
-        <h2 class="section-title">Certifications & Training</h2>
-        <div class="certifications-grid">
-            <div class="certification-badge fade-in">
-                <div class="badge-icon">
-                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="50" cy="50" r="45" fill="url(#grad-cp)" />
-                        <path d="M50 25 L60 40 L50 35 L40 40 Z" fill="#fff"/>
-                        <text x="50" y="60" font-size="30" fill="#fff" text-anchor="middle" font-weight="bold">AWS</text>
-                        <text x="50" y="78" font-size="12" fill="#fff" text-anchor="middle">CERTIFIED</text>
-                        <defs>
-                            <linearGradient id="grad-cp" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#FF9900;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#FF6600;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                </div>
-                <div class="badge-info">
-                    <div class="badge-name">AWS Certified Cloud Practitioner</div>
-                    <div class="badge-issuer">Amazon Web Services | Feb 2024 - Feb 2027</div>
-                </div>
-            </div>
-            <div class="certification-badge fade-in">
-                <div class="badge-icon">
-                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="50" cy="50" r="45" fill="url(#grad1)" />
-                        <text x="50" y="60" font-size="40" fill="#fff" text-anchor="middle" font-weight="bold">AWS</text>
-                        <defs>
-                            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#FF9900;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#FF6600;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                </div>
-                <div class="badge-info">
-                    <div class="badge-name">Introduction to Amazon CloudFront</div>
-                    <div class="badge-issuer">AWS Skill Builder | Dec 2025</div>
-                </div>
-            </div>
-            <div class="certification-badge fade-in">
-                <div class="badge-icon">
-                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="50" cy="50" r="45" fill="url(#grad2)" />
-                        <text x="50" y="60" font-size="40" fill="#fff" text-anchor="middle" font-weight="bold">AWS</text>
-                        <defs>
-                            <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#FF9900;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#FF6600;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                </div>
-                <div class="badge-info">
-                    <div class="badge-name">AWS Compute Services Overview</div>
-                    <div class="badge-issuer">AWS Skill Builder | Nov 2025</div>
-                </div>
-            </div>
-            <div class="certification-badge fade-in">
-                <div class="badge-icon">
-                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="50" cy="50" r="45" fill="url(#grad3)" />
-                        <text x="50" y="55" font-size="35" fill="#fff" text-anchor="middle" font-weight="bold">AWS</text>
-                        <text x="50" y="75" font-size="16" fill="#fff" text-anchor="middle">Educate</text>
-                        <defs>
-                            <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#00ccff;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#0066cc;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                </div>
-                <div class="badge-info">
-                    <div class="badge-name">Getting Started with Networking</div>
-                    <div class="badge-issuer">AWS Educate | Nov 2025</div>
-                </div>
-            </div>
-            <div class="certification-badge fade-in">
-                <div class="badge-icon">
-                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="50" cy="50" r="45" fill="url(#grad4)" />
-                        <text x="50" y="55" font-size="30" fill="#fff" text-anchor="middle" font-weight="bold">AWS</text>
-                        <text x="50" y="75" font-size="14" fill="#fff" text-anchor="middle">SimuLearn</text>
-                        <defs>
-                            <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#FF9900;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#FF6600;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                </div>
-                <div class="badge-info">
-                    <div class="badge-name">Cloud Computing Essentials</div>
-                    <div class="badge-issuer">AWS SimuLearn | Nov 2025</div>
-                </div>
-            </div>
-            <div class="certification-badge fade-in">
-                <div class="badge-icon">
-                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="50" cy="50" r="45" fill="url(#grad5)" />
-                        <text x="50" y="60" font-size="28" fill="#fff" text-anchor="middle" font-weight="bold">MERN</text>
-                        <defs>
-                            <linearGradient id="grad5" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#3DDC84;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#07C160;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                </div>
-                <div class="badge-info">
-                    <div class="badge-name">MERN Full Stack Internship</div>
-                    <div class="badge-issuer">Ethnus | Dec 2023</div>
-                </div>
-            </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="section-head"><span class="eyebrow">Experience</span><h2>Where I've been building.</h2></div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">March 2026 – Present · Noida, Uttar Pradesh</div>
+        <div class="tl-role">Associate Cloud Security Intern <span class="tl-current">Current</span></div>
+        <div class="tl-org">Seclogic.io</div>
+        <div class="glass tl-card">
+          <ul>
+            <li>Performed AWS cloud security assessments identifying IAM misconfigurations, S3 policy violations, and VPC exposure risks with remediation aligned to CIS benchmarks.</li>
+            <li>Conducted API security testing against the OWASP API Top 10 — broken authentication, data exposure, and injection flaws across REST endpoints.</li>
+            <li>Configured AWS GuardDuty, WAF, and Security Hub for continuous threat detection and high-severity incident prioritization.</li>
+          </ul>
         </div>
-    </section>
-    <section id="contact">
-        <div class="section-header">07</div>
-        <h2 class="section-title">Let's Connect</h2>
-        <p style="color: var(--gray-text); margin-bottom: 2rem; font-size: 1.2rem;">Feel free to reach out for collaborations, opportunities, or just a chat about cloud technologies!</p>
-        <p style="color: var(--gray-text); margin-bottom: 2rem; font-size: 1rem;">📧 <strong>Email:</strong> nipuntyagi983@gmail.com</p>
-        <div class="social-links">
-            <a href="mailto:nipuntyagi983@gmail.com" class="social-link">📧 Email Me</a>
-            <a href="https://www.linkedin.com/in/nipun-bhardwaj-6312a9265/" target="_blank" class="social-link">💼 LinkedIn</a>
-            <a href="https://github.com/nipun-10" target="_blank" class="social-link">💻 GitHub</a>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">November 2025 – January 2026 · Noida, Uttar Pradesh</div>
+        <div class="tl-role">AWS Cloud Engineer Intern</div>
+        <div class="tl-org">Velocis Systems Pvt. Ltd.</div>
+        <div class="glass tl-card">
+          <ul>
+            <li>Provisioned EC2, IAM roles, security groups, and VPC components for production workloads, enforcing least-privilege access.</li>
+            <li>Deployed CloudWatch dashboards, alarms, and log filters to monitor utilization, detect anomalies, and reduce MTTR.</li>
+            <li>Designed a multi-tier VPC with public/private subnets, NAT gateways, and VPC peering for secure inter-service communication.</li>
+          </ul>
         </div>
-    </section>
-    <footer>
-        <p>© 2026 Nipun Bhardwaj | All Rights Reserved</p>
-    </footer>
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-        const observerOptions = { threshold: 0.05, rootMargin: '0px 0px 0px 0px' };
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-        document.querySelectorAll('.fade-in').forEach(el => {
-            observer.observe(el);
-        });
-        // Immediately make all elements visible on page load as fallback
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.querySelectorAll('.fade-in').forEach(el => {
-                    el.classList.add('visible');
-                });
-            }, 100);
-        });
-        window.addEventListener('scroll', () => {
-            const sections = document.querySelectorAll('section');
-            const navLinks = document.querySelectorAll('nav a');
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.clientHeight;
-                if (scrollY >= (sectionTop - 200)) {
-                    current = section.getAttribute('id');
-                }
-            });
-        });
-    </script>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="section-head"><span class="eyebrow">Projects</span><h2>Selected cloud &amp; AI work.</h2></div>
+    <div class="project-grid">
+
+      <div class="glass project-card">
+        <div class="project-top"><div class="project-ico">🧠</div>
+          <a href="https://github.com/nipun-10/NipunGPT-Agentic-AI-Chatbot" target="_blank" class="tag" style="text-decoration:none;">GitHub ↗</a></div>
+        <h3>NipunGPT — Agentic AI Chatbot</h3>
+        <p>An agentic AI assistant on FastAPI, LangGraph, and the Gemini 2.5 suite that executes multi-step workflows, recalls long-term memory, runs calculations, performs live web search, and answers questions over uploaded documents via RAG.</p>
+        <div class="impact-box"><b>Impact</b>SSE streaming, SQLite-backed checkpointing, and a Chroma vector store deliver real-time, stateful agentic conversations — containerized and shipped via a self-hosted GitHub Actions → ECR → EC2 pipeline.</div>
+        <div class="tag-row" style="margin-bottom:0;">
+          <span class="tag">LangGraph</span><span class="tag">FastAPI</span><span class="tag">Gemini 2.5</span><span class="tag">RAG</span><span class="tag">Docker</span>
+        </div>
+      </div>
+
+      <div class="glass project-card">
+        <div class="project-top"><div class="project-ico">🔐</div></div>
+        <h3>Serverless API Discovery &amp; Security Pipeline</h3>
+        <p>A serverless API monitoring pipeline using API Gateway, CloudWatch Subscription Filters, and SQS to detect unauthorized endpoints in real time, with a containerized Go Lambda for log enrichment via Substation.</p>
+        <div class="impact-box"><b>Impact</b>Fault-tolerant log ingestion enabling anomaly detection, automated alerting, and API threat intelligence at scale.</div>
+        <div class="tag-row" style="margin-bottom:0;">
+          <span class="tag">API Gateway</span><span class="tag">Lambda (Go)</span><span class="tag">SQS</span><span class="tag">Security</span>
+        </div>
+      </div>
+
+      <div class="glass project-card">
+        <div class="project-top"><div class="project-ico">🛡️</div></div>
+        <h3>Kubernetes Policy Enforcement using OPA Gatekeeper</h3>
+        <p>Deployed OPA Gatekeeper as a Kubernetes admission controller, authoring ConstraintTemplates and Constraints in Rego to block privileged containers, missing resource limits, and untrusted registries.</p>
+        <div class="impact-box"><b>Impact</b>Audit mode surfaced existing violations and aligned cluster posture with CIS Kubernetes benchmarks and SOC2 requirements.</div>
+        <div class="tag-row" style="margin-bottom:0;">
+          <span class="tag">Kubernetes</span><span class="tag">OPA Gatekeeper</span><span class="tag">Rego</span><span class="tag">Compliance</span>
+        </div>
+      </div>
+
+      <div class="glass project-card">
+        <div class="project-top"><div class="project-ico">🏗️</div></div>
+        <h3>Secure 3-Tier Architecture with VPC Isolation</h3>
+        <p>Designed a 3-tier AWS architecture with isolated public/private subnets across web, app, and database layers, with strict security groups, NACLs, and VPC peering.</p>
+        <div class="impact-box"><b>Impact</b>NAT Gateway-secured outbound access eliminated public IP exposure for backend instances entirely.</div>
+        <div class="tag-row" style="margin-bottom:0;">
+          <span class="tag">VPC</span><span class="tag">NACLs</span><span class="tag">NAT Gateway</span><span class="tag">Architecture</span>
+        </div>
+      </div>
+
+      <div class="glass project-card">
+        <div class="project-top"><div class="project-ico">☁️</div></div>
+        <h3>Full-Scale Application Deployment on AWS</h3>
+        <p>Deployed a highly available, fault-tolerant web application with an ALB across an Auto Scaling Group spanning multiple AZs, S3-hosted static assets behind CloudFront, and Route 53 DNS.</p>
+        <div class="impact-box"><b>Impact</b>Low-latency global delivery with automated scaling and zero single points of failure.</div>
+        <div class="tag-row" style="margin-bottom:0;">
+          <span class="tag">EC2 / ALB</span><span class="tag">Auto Scaling</span><span class="tag">CloudFront</span><span class="tag">Route 53</span>
+        </div>
+      </div>
+
+      <div class="glass project-card">
+        <div class="project-top"><div class="project-ico">⚡</div></div>
+        <h3>Serverless CRUD API Using AWS Lambda</h3>
+        <p>A serverless REST API on Lambda + API Gateway with request validation, a DynamoDB-backed NoSQL store, IAM role-based access restrictions, and centralized CloudWatch logging.</p>
+        <div class="impact-box"><b>Impact</b>Fully managed, pay-per-use API with built-in observability and least-privilege data access.</div>
+        <div class="tag-row" style="margin-bottom:0;">
+          <span class="tag">Lambda</span><span class="tag">DynamoDB</span><span class="tag">API Gateway</span><span class="tag">IAM</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="certifications">
+  <div class="wrap">
+    <div class="section-head"><span class="eyebrow">Certifications</span><h2>Continuous learning, certified.</h2></div>
+    <div class="cert-grid">
+      <div class="glass cert-card">
+        <div class="cert-ico">🏅</div>
+        <div><div class="cert-name">AWS Certified Cloud Practitioner</div><div class="cert-issuer">Amazon Web Services · Feb 2024 – Feb 2027</div></div>
+      </div>
+      <div class="glass cert-card">
+        <div class="cert-ico">🏅</div>
+        <div><div class="cert-name">Introduction to Amazon CloudFront</div><div class="cert-issuer">AWS Skill Builder · Dec 2025</div></div>
+      </div>
+      <div class="glass cert-card">
+        <div class="cert-ico">🏅</div>
+        <div><div class="cert-name">AWS Compute Services Overview</div><div class="cert-issuer">AWS Skill Builder · Nov 2025</div></div>
+      </div>
+      <div class="glass cert-card">
+        <div class="cert-ico">🏅</div>
+        <div><div class="cert-name">Getting Started with Networking</div><div class="cert-issuer">AWS Educate · Nov 2025</div></div>
+      </div>
+      <div class="glass cert-card">
+        <div class="cert-ico">🏅</div>
+        <div><div class="cert-name">Cloud Computing Essentials</div><div class="cert-issuer">AWS SimuLearn · Nov 2025</div></div>
+      </div>
+      <div class="glass cert-card">
+        <div class="cert-ico">🏅</div>
+        <div><div class="cert-name">MERN Full Stack Internship</div><div class="cert-issuer">Ethnus · Dec 2023</div></div>
+      </div>
+    </div>
+
+    <div class="glass edu-card">
+      <div class="edu-ico">🎓</div>
+      <div>
+        <h3 style="font-size:1rem;font-weight:600;">Bachelor of Technology — Computer Science (Information Security)</h3>
+        <div style="color:var(--muted);font-size:.88rem;margin-top:4px;">Vellore Institute of Technology, Vellore, India · July 2021 – June 2025</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="lets-connect">
+  <div class="wrap">
+    <div class="glass cta-band">
+      <span class="eyebrow">Let's Collaborate</span>
+      <h2>Let's build secure, intelligent cloud systems together.</h2>
+      <p>I'm always up for discussing cloud security, AWS architecture, DevSecOps automation, or Generative AI engineering. Whether you're hiring or exploring a problem, let's connect.</p>
+      <div class="cta-row" style="margin-bottom:0;">
+        <a href="#contact" class="btn btn-primary">Contact Me <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        <a href="Nipun_Bhardwaj_Resume.pdf" download class="btn btn-ghost"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg> Download Resume</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="section-head"><span class="eyebrow">Contact</span><h2>Let's talk cloud, security, or AI.</h2></div>
+    <div class="contact-grid">
+      <div>
+        <p style="color:var(--muted);margin-bottom:18px;">Open to Cloud, Cloud Security, and Generative AI Engineering opportunities. Happy to discuss infrastructure, automation, and intelligent systems.</p>
+        <div class="contact-list">
+          <a class="glass contact-row" href="mailto:nipuntyagi983@gmail.com">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c7ff" stroke-width="2"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+            nipuntyagi983@gmail.com
+          </a>
+          <a class="glass contact-row" href="tel:+919389316029">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c7ff" stroke-width="2"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg>
+            +91 93893 16029
+          </a>
+          <a class="glass contact-row" href="https://www.linkedin.com/in/nipun-bhardwaj-6312a9265/" target="_blank">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c7ff" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+            linkedin.com/in/nipun-bhardwaj
+          </a>
+          <a class="glass contact-row" href="https://github.com/nipun-10" target="_blank">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c7ff" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+            github.com/nipun-10
+          </a>
+        </div>
+      </div>
+      <form class="glass" onsubmit="return false;">
+        <div class="form-grid">
+          <div><label for="name">Name</label><input id="name" required></div>
+          <div><label for="email">Email</label><input id="email" type="email" required></div>
+        </div>
+        <div><label for="message">Message</label><textarea id="message" rows="5" required></textarea></div>
+        <button class="submit" type="submit">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:6px;"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>
+          Send Message
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+    <div>© 2026 Nipun Bhardwaj. All rights reserved.</div>
+    <div class="footer-links">
+      <a href="https://github.com/nipun-10" target="_blank">GitHub</a>
+      <a href="https://www.linkedin.com/in/nipun-bhardwaj-6312a9265/" target="_blank">LinkedIn</a>
+      <a href="mailto:nipuntyagi983@gmail.com">Email</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const id=a.getAttribute('href');
+    const el=document.querySelector(id);
+    if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth',block:'start'});}
+  });
+});
+</script>
+</body>
+</html>
