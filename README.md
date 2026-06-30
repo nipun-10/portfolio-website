@@ -24,26 +24,6 @@ The following certifications and training badges are highlighted in the portfoli
 
 ---
 
-## 🖼️ Project Screenshots
-
-To fully represent the project, the following screenshots of the deployed website should be included. **(Ensure these files are uploaded to the root directory of your repository)**.
-
-### Screenshot 1: Hero & Primary Layout
-![Hero Section Layout](Portfolio_img1.png)
-
-### Screenshot 2: About Me & Contact Info
-![About and Contact Section](Portfolio_img2.png)
-
-### Screenshot 3: Core Skills Grid
-![Detailed Skills Breakdown](Portfolio_img3.png)
-
-### Screenshot 4: Professional Experience
-![Experience Section (e.g., Velocis Internship)](Portfolio_img4.png)
-
-### Screenshot 5: Certifications Badges
-![Certifications & Badges Display](Portfolio_img5.png)
-
----
 
 ## 🤝 Get In Touch
 
